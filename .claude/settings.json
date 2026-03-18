@@ -9,7 +9,9 @@
       "Bash(pnpm install:*)",
       "Bash(pnpm lint:*)",
       "Bash(pnpm --filter @ai-job-analyzer/backend build)",
-      "Bash(pnpm --filter @ai-job-analyzer/backend add -D @types/express)"
+      "Bash(pnpm --filter @ai-job-analyzer/backend add -D @types/express)",
+      "Bash(pnpm --filter @ai-job-analyzer/backend add multer pdf-parse)",
+      "Bash(pnpm --filter @ai-job-analyzer/backend add -D @types/multer @types/pdf-parse)"
     ]
   }
 }

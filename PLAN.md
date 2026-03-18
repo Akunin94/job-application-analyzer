@@ -20,10 +20,10 @@
 
 ## Phase 3 — Backend: PDF Upload
 
-- [ ] multer middleware
-- [ ] `pdf.service.ts` — pdf-parse text extraction
-- [ ] `POST /api/upload/resume` — multipart/form-data → `{ text, fileName }`
-- [ ] Zod schemas for upload request/response
+- [x] multer middleware
+- [x] `pdf.service.ts` — pdf-parse text extraction
+- [x] `POST /api/upload/resume` — multipart/form-data → `{ text, fileName }`
+- [x] Zod schemas for upload request/response
 
 ## Phase 4 — Backend: Claude Streaming
 
