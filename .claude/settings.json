@@ -15,7 +15,8 @@
       "Bash(pnpm --filter @ai-job-analyzer/frontend build)",
       "Bash(gh run:*)",
       "Bash(pnpm format:check)",
-      "Bash(pnpm prettier:*)"
+      "Bash(pnpm prettier:*)",
+      "Bash(pnpm --filter @ai-job-analyzer/frontend add zustand immer)"
     ]
   }
 }

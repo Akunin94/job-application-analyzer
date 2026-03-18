@@ -43,10 +43,10 @@
 
 ## Phase 6 — Frontend: State + SSE Hook
 
-- [ ] `store.ts` — Zustand with immer + devtools + persist (history slice only)
-- [ ] `useSSE.ts` — generic hook: statuses `idle/connecting/streaming/done/error`, typed `SSEEvent`
-- [ ] `api-client.ts`, `query-client.ts`, `cn()` utilities
-- [ ] Layout + Sidebar + ThemeToggle + ErrorBoundary
+- [x] `store.ts` — Zustand with immer + devtools + persist (history slice only)
+- [x] `useSSE.ts` — generic hook: statuses `idle/connecting/streaming/done/error`, typed `SSEEvent`
+- [x] `api-client.ts`, `query-client.ts`, `cn()` utilities
+- [x] Layout + Sidebar + ThemeToggle + ErrorBoundary
 
 ## Phase 7 — Frontend: Resume Upload
 

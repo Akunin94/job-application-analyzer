@@ -1,6 +1,7 @@
 import { BrainCircuit, Clock, GitCompare, Home } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { cn } from '@/shared/lib/cn';
+import { ThemeToggle } from './ThemeToggle';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home, end: true },
@@ -38,6 +39,9 @@ export function Layout() {
             </NavLink>
           ))}
         </nav>
+        <div className="mt-auto px-1">
+          <ThemeToggle />
+        </div>
       </aside>
 
       <main className="flex-1 overflow-auto">
