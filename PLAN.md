@@ -12,11 +12,11 @@
 
 ## Phase 2 — Backend: Foundation
 
-- [ ] Express 5 + TypeScript (ESM) + `apps/backend` structure
-- [ ] `config/env.ts` — envalid env variable validation
-- [ ] Middleware: helmet, cors, morgan, error handler
-- [ ] `GET /api/health`
-- [ ] Zod middleware for request validation
+- [x] Express 5 + TypeScript (ESM) + `apps/backend` structure
+- [x] `config/env.ts` — envalid env variable validation
+- [x] Middleware: helmet, cors, morgan, error handler
+- [x] `GET /api/health`
+- [x] Zod middleware for request validation
 
 ## Phase 3 — Backend: PDF Upload
 
