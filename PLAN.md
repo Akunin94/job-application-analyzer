@@ -35,11 +35,11 @@
 
 ## Phase 5 — Frontend: Foundation
 
-- [ ] Vite 5 + React 18 + TypeScript strict + Tailwind CSS v3
-- [ ] shadcn/ui init (dark theme, Linear-inspired)
-- [ ] Path aliases (`@/features/...`, `@/shared/...`)
-- [ ] `providers.tsx` — QueryClient + Toaster + ThemeProvider
-- [ ] `router.tsx` — React Router v6 data router, 4 pages (stubs)
+- [x] Vite 5 + React 18 + TypeScript strict + Tailwind CSS v3
+- [x] shadcn/ui init (dark theme, Linear-inspired)
+- [x] Path aliases (`@/features/...`, `@/shared/...`)
+- [x] `providers.tsx` — QueryClient + Toaster + ThemeProvider
+- [x] `router.tsx` — React Router v6 data router, 4 pages (stubs)
 
 ## Phase 6 — Frontend: State + SSE Hook
 
