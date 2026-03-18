@@ -11,6 +11,7 @@ All AI responses stream in real-time via SSE (Server-Sent Events).
 ## Tech Stack
 
 ### Frontend (`apps/frontend`)
+
 - React 18 + Vite 5 + TypeScript (strict mode)
 - React Router v6 — data router pattern (loaders/actions)
 - TanStack Query v5 — server state
@@ -24,6 +25,7 @@ All AI responses stream in real-time via SSE (Server-Sent Events).
 - react-hot-toast — notifications
 
 ### Backend (`apps/backend`)
+
 - Node.js 20 (ESM) + Express 5 + TypeScript
 - Anthropic SDK — model: `claude-sonnet-4-20250514`, streaming enabled
 - pdf-parse — extract text from uploaded PDFs
@@ -33,9 +35,11 @@ All AI responses stream in real-time via SSE (Server-Sent Events).
 - envalid — environment variable validation
 
 ### Shared (`packages/shared`)
+
 - TypeScript types shared between frontend and backend
 
 ### Tooling
+
 - pnpm workspaces (monorepo)
 - Docker + docker-compose
 - ESLint (airbnb-typescript) + Prettier + Husky + lint-staged
@@ -108,40 +112,40 @@ ai-job-analyzer/
 
 ```typescript
 export interface AnalysisResult {
-  matchScore: number // 0–100
-  confidence: 'low' | 'medium' | 'high'
-  summary: string
+  matchScore: number; // 0–100
+  confidence: 'low' | 'medium' | 'high';
+  summary: string;
   categoryScores: {
-    technicalSkills: number
-    experience: number
-    cultureFit: number
-    keywords: number
-    seniority: number
-    tools: number
-  }
-  strengths: string[]
-  skillGaps: SkillGap[]
-  redFlags: string[]
-  recommendations: string[]
-  keywords: { matched: string[]; missing: string[] }
-  coverLetterOutline: string
+    technicalSkills: number;
+    experience: number;
+    cultureFit: number;
+    keywords: number;
+    seniority: number;
+    tools: number;
+  };
+  strengths: string[];
+  skillGaps: SkillGap[];
+  redFlags: string[];
+  recommendations: string[];
+  keywords: { matched: string[]; missing: string[] };
+  coverLetterOutline: string;
 }
 
 export interface SkillGap {
-  skill: string
-  priority: 'critical' | 'important' | 'nice-to-have'
-  context: string
+  skill: string;
+  priority: 'critical' | 'important' | 'nice-to-have';
+  context: string;
 }
 
 export type SSEEvent =
-  | { type: 'match_score';     data: { score: number; confidence: 'low' | 'medium' | 'high' } }
+  | { type: 'match_score'; data: { score: number; confidence: 'low' | 'medium' | 'high' } }
   | { type: 'category_scores'; data: AnalysisResult['categoryScores'] }
-  | { type: 'strengths';       data: string[] }
-  | { type: 'gaps';            data: SkillGap[] }
+  | { type: 'strengths'; data: string[] }
+  | { type: 'gaps'; data: SkillGap[] }
   | { type: 'recommendations'; data: string[] }
-  | { type: 'cover_letter';    data: string }
-  | { type: 'done';            data: null }
-  | { type: 'error';           data: { message: string } }
+  | { type: 'cover_letter'; data: string }
+  | { type: 'done'; data: null }
+  | { type: 'error'; data: { message: string } };
 ```
 
 ---
@@ -168,6 +172,7 @@ res.end()
 ```
 
 **Frontend** — generic `useSSE` hook in `src/shared/hooks/useSSE.ts`:
+
 - Status: `'idle' | 'connecting' | 'streaming' | 'done' | 'error'`
 - Uses `EventSource` API
 - Cleanup via `useEffect` return
@@ -199,22 +204,22 @@ No generic boilerplate. Return only the letter text.
 // One store, feature slices via immer + devtools + persist
 interface AppStore {
   // resume slice
-  resumeText: string
-  resumeFileName: string
-  setResume: (text: string, fileName: string) => void
-  clearResume: () => void
+  resumeText: string;
+  resumeFileName: string;
+  setResume: (text: string, fileName: string) => void;
+  clearResume: () => void;
 
   // analysis slice
-  currentAnalysis: AnalysisResult | null
-  streamingStatus: 'idle' | 'connecting' | 'streaming' | 'done' | 'error'
-  setAnalysis: (result: AnalysisResult) => void
-  setStreamingStatus: (status: string) => void
+  currentAnalysis: AnalysisResult | null;
+  streamingStatus: 'idle' | 'connecting' | 'streaming' | 'done' | 'error';
+  setAnalysis: (result: AnalysisResult) => void;
+  setStreamingStatus: (status: string) => void;
 
   // history slice (persisted)
-  history: Array<{ id: string; date: string; company: string; result: AnalysisResult }>
-  addToHistory: (entry: HistoryEntry) => void
-  removeFromHistory: (id: string) => void
-  clearHistory: () => void
+  history: Array<{ id: string; date: string; company: string; result: AnalysisResult }>;
+  addToHistory: (entry: HistoryEntry) => void;
+  removeFromHistory: (id: string) => void;
+  clearHistory: () => void;
 }
 ```
 
