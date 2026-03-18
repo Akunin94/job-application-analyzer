@@ -27,11 +27,11 @@
 
 ## Phase 4 — Backend: Claude Streaming
 
-- [ ] `claude.service.ts` — Anthropic SDK, streaming enabled
-- [ ] `analyze.prompt.ts` — prompt with `<resume>` + `<job_posting>` XML tags
-- [ ] `coverletter.prompt.ts` — cover letter prompt
-- [ ] `POST /api/analyze` — SSE stream (`sendEvent` pattern)
-- [ ] `POST /api/cover-letter` — SSE stream
+- [x] `claude.service.ts` — Anthropic SDK, streaming enabled
+- [x] `analyze.prompt.ts` — prompt with `<resume>` + `<job_posting>` XML tags
+- [x] `coverletter.prompt.ts` — cover letter prompt
+- [x] `POST /api/analyze` — SSE stream (`sendEvent` pattern)
+- [x] `POST /api/cover-letter` — SSE stream
 
 ## Phase 5 — Frontend: Foundation
 
