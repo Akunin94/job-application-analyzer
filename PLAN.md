@@ -50,11 +50,11 @@
 
 ## Phase 7 — Frontend: Resume Upload
 
-- [ ] `ResumeUploader` — react-dropzone, drag & drop PDF
-- [ ] `ResumePreview` — pdfjs-dist in-browser preview
-- [ ] `useResumeStore` hook (Zustand slice)
-- [ ] `AnalysisForm` + React Hook Form v7 + Zod validation
-- [ ] `AnalyzePage.tsx` wires everything together
+- [x] `ResumeUploader` — react-dropzone, drag & drop PDF
+- [x] `ResumePreview` — pdfjs-dist in-browser preview
+- [x] `useResumeStore` hook (Zustand slice)
+- [x] `AnalysisForm` + React Hook Form v7 + Zod validation
+- [x] `AnalyzePage.tsx` wires everything together
 
 ## Phase 8 — Frontend: Streaming Analysis UI
 
