@@ -2,6 +2,7 @@
   "name": "ai-job-analyzer",
   "private": true,
   "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"pnpm --filter @ai-job-analyzer/backend dev\" \"pnpm --filter @ai-job-analyzer/frontend dev\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -11,6 +12,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
+    "concurrently": "^9.2.1",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
