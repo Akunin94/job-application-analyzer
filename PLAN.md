@@ -58,12 +58,12 @@
 
 ## Phase 8 — Frontend: Streaming Analysis UI
 
-- [ ] `useStreamAnalysis` — calls `/api/analyze`, handles SSE events
-- [ ] `StreamingOutput` — blinking cursor while streaming
-- [ ] `MatchScoreCard` — animated counter 0 → N (Framer Motion)
-- [ ] `SkillRadarChart` — Recharts RadarChart with entrance animation
-- [ ] `SkillGapList` — priorities: critical / important / nice-to-have
-- [ ] `AnalysisResult` dashboard — Skeleton for loading states
+- [x] `useStreamAnalysis` — calls `/api/analyze`, handles SSE events
+- [x] `StreamingOutput` — blinking cursor while streaming
+- [x] `MatchScoreCard` — animated counter 0 → N (Framer Motion)
+- [x] `SkillRadarChart` — Recharts RadarChart with entrance animation
+- [x] `SkillGapList` — priorities: critical / important / nice-to-have
+- [x] `AnalysisResult` dashboard — Skeleton for loading states
 
 ## Phase 9 — Frontend: Cover Letter + History
 
