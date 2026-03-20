@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { ResumeUploader } from '../../resume/components/ResumeUploader';
@@ -29,6 +30,16 @@ export function AnalysisForm({ onSubmit, isLoading }: AnalysisFormProps) {
       <div className="space-y-2">
         <Label>Resume</Label>
         <ResumeUploader />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="company">Company / Job Title</Label>
+        <Input
+          id="company"
+          placeholder="e.g. Acme Corp — Senior Engineer"
+          disabled={isLoading}
+          {...register('company')}
+        />
       </div>
 
       <div className="space-y-2">

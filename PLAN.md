@@ -67,11 +67,11 @@
 
 ## Phase 9 — Frontend: Cover Letter + History
 
-- [ ] `CoverLetterPanel` — `useStreamAnalysis` for `/api/cover-letter`, SSE text streaming
-- [ ] `HistoryPage` — list with empty state for first-time users
-- [ ] `HistoryList` / `HistoryItem` — past analysis cards
-- [ ] `CompareDrawer` — side-by-side comparison of two results (`ComparePage`)
-- [ ] `useAnalysisHistory` hook, `addToHistory` on analysis completion
+- [x] `CoverLetterPanel` — `useStreamAnalysis` for `/api/cover-letter`, SSE text streaming
+- [x] `HistoryPage` — list with empty state for first-time users
+- [x] `HistoryList` / `HistoryItem` — past analysis cards
+- [x] `CompareDrawer` — side-by-side comparison of two results (`ComparePage`)
+- [x] `useAnalysisHistory` hook, `addToHistory` on analysis completion
 
 ## Phase 10 — Tests + CI + Deploy
 

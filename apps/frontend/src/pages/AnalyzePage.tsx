@@ -6,24 +6,28 @@ import {
   AnalysisResultDashboard,
   AnalysisResultSkeleton,
 } from '@/features/analysis/components/AnalysisResult';
+import { CoverLetterPanel } from '@/features/analysis/components/CoverLetterPanel';
 import { StreamingOutput } from '@/features/analysis/components/StreamingOutput';
 import { useStreamAnalysis } from '@/features/analysis/hooks/useStreamAnalysis';
 import { AnalysisFormValues } from '@/features/analysis/schemas/analysis.schema';
 import { useResumeStore } from '@/features/resume/hooks/useResumeStore';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
+import { Separator } from '@/shared/components/ui/separator';
 
 export default function AnalyzePage() {
   const { resumeText } = useResumeStore();
   const currentAnalysis = useStore(s => s.currentAnalysis);
   const { status, start } = useStreamAnalysis();
   const [showForm, setShowForm] = useState(!currentAnalysis);
+  const [jobPosting, setJobPosting] = useState('');
 
   const isLoading = status === 'connecting' || status === 'streaming';
 
   const handleSubmit = async (values: AnalysisFormValues) => {
+    setJobPosting(values.jobPosting);
     setShowForm(false);
-    await start(resumeText, values.jobPosting);
+    await start(resumeText, values.jobPosting, values.company ?? 'Unknown Company');
   };
 
   if (isLoading) {
@@ -57,6 +61,16 @@ export default function AnalyzePage() {
           </Button>
         </div>
         <AnalysisResultDashboard result={currentAnalysis} />
+        {jobPosting && (
+          <>
+            <Separator className="my-6" />
+            <CoverLetterPanel
+              resumeText={resumeText}
+              jobPosting={jobPosting}
+              analysis={currentAnalysis}
+            />
+          </>
+        )}
       </div>
     );
   }

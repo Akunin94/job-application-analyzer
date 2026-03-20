@@ -13,9 +13,11 @@ type PartialAnalysis = Partial<
 export function useStreamAnalysis() {
   const setAnalysis = useStore(s => s.setAnalysis);
   const setStreamingStatus = useStore(s => s.setStreamingStatus);
+  const addToHistory = useStore(s => s.addToHistory);
 
   const [partial, setPartial] = useState<PartialAnalysis>({});
   const accRef = useRef<Partial<AnalysisResult>>({});
+  const companyRef = useRef('Unknown Company');
 
   const handleEvent = useCallback(
     (event: SSEEvent) => {
@@ -70,6 +72,12 @@ export function useStreamAnalysis() {
             coverLetterOutline: '',
           };
           setAnalysis(result);
+          addToHistory({
+            id: crypto.randomUUID(),
+            date: new Date().toISOString(),
+            company: companyRef.current,
+            result,
+          });
           setStreamingStatus('done');
           break;
         }
@@ -79,14 +87,15 @@ export function useStreamAnalysis() {
         }
       }
     },
-    [setAnalysis, setStreamingStatus],
+    [setAnalysis, setStreamingStatus, addToHistory],
   );
 
   const { status, connect, abort } = useSSE(handleEvent);
 
   const start = useCallback(
-    async (resumeText: string, jobPosting: string) => {
+    async (resumeText: string, jobPosting: string, company = 'Unknown Company') => {
       accRef.current = {};
+      companyRef.current = company;
       setPartial({});
       setStreamingStatus('connecting');
       await connect(ANALYZE_URL, { resumeText, jobPosting });

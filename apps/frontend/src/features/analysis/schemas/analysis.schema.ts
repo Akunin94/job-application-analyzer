@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const analysisFormSchema = z.object({
+  company: z.string().optional(),
   jobPosting: z
     .string()
     .min(50, 'Paste the full job posting (at least 50 characters)')
