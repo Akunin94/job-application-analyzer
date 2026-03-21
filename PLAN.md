@@ -75,12 +75,12 @@
 
 ## Phase 10 — Tests + CI + Deploy
 
-- [ ] Vitest unit tests: `useSSE`, `useStreamAnalysis`, `AnalysisResult`, `pdf.service`
-- [ ] React Testing Library: `ResumeUploader`, `MatchScoreCard`, `SkillGapList`
-- [ ] MSW mocks for all API calls in frontend tests
-- [ ] supertest integration tests: `/api/health`, `/api/upload/resume`, `/api/analyze`
-- [ ] GitHub Actions: lint + test + build pipeline
-- [ ] Deploy: Vercel (frontend) + Railway (backend)
+- [x] Vitest unit tests: `useSSE`, `useStreamAnalysis`, `AnalysisResult`, `pdf.service`
+- [x] React Testing Library: `ResumeUploader`, `MatchScoreCard`, `SkillGapList`
+- [x] MSW mocks for all API calls in frontend tests
+- [x] supertest integration tests: `/api/health`, `/api/upload/resume`, `/api/analyze`
+- [x] GitHub Actions: lint + test + build pipeline
+- [x] Deploy: Vercel (frontend) + Railway (backend)
 
 ---
 

@@ -18,6 +18,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
   },
+  ignorePatterns: ['dist/', 'node_modules/', '*.config.js', '*.config.ts'],
   overrides: [
     {
       files: ['apps/frontend/**/*.{ts,tsx}'],
@@ -37,6 +38,11 @@ module.exports = {
         'import/prefer-default-export': 'off',
       },
     },
+    {
+      files: ['**/__tests__/**/*.{ts,tsx}', '**/*.test.{ts,tsx}', '**/test/**/*.{ts,tsx}'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
   ],
-  ignorePatterns: ['dist/', 'node_modules/', '*.config.js', '*.config.ts'],
 };
