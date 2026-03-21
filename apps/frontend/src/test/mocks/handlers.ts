@@ -27,6 +27,7 @@ export const handlers = [
       'event: strengths\ndata: ["React","TypeScript","Node.js"]\n\n',
       'event: gaps\ndata: [{"skill":"Kubernetes","priority":"important","context":"Used in CI/CD"}]\n\n',
       'event: recommendations\ndata: ["Learn Kubernetes","Get AWS cert"]\n\n',
+      'event: red_flags\ndata: [{"flag":"US-only remote","quote":"Must be based in the United States","severity":"critical"}]\n\n',
       'event: done\ndata: null\n\n',
     );
     return new HttpResponse(body, {

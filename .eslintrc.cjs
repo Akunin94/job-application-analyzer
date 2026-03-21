@@ -39,7 +39,21 @@ module.exports = {
       },
     },
     {
-      files: ['**/__tests__/**/*.{ts,tsx}', '**/*.test.{ts,tsx}', '**/test/**/*.{ts,tsx}'],
+      files: [
+        'apps/frontend/src/**/__tests__/**/*.{ts,tsx}',
+        'apps/frontend/src/**/*.test.{ts,tsx}',
+        'apps/frontend/src/test/**/*.{ts,tsx}',
+      ],
+      parserOptions: {
+        project: ['./apps/frontend/tsconfig.test.json'],
+        tsconfigRootDir: __dirname,
+      },
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
+    {
+      files: ['apps/backend/src/**/__tests__/**/*.{ts,tsx}', 'apps/backend/src/test/**/*.{ts,tsx}'],
       rules: {
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
       },

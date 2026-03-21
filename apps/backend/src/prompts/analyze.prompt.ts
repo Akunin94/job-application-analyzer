@@ -18,7 +18,7 @@ The JSON must match this exact structure:
   },
   "strengths": <string[]>,
   "skillGaps": [{ "skill": string, "priority": "critical"|"important"|"nice-to-have", "context": string }],
-  "redFlags": <string[]>,
+  "redFlags": [{ "flag": string, "quote": string, "severity": "warning"|"critical" }],
   "recommendations": <string[]>,
   "keywords": { "matched": string[], "missing": string[] },
   "coverLetterOutline": <string, brief outline for a cover letter>
@@ -32,12 +32,14 @@ Evaluate:
 - Seniority level match
 - Tools and stack alignment
 
-Detect red flags where applicable:
-- US-only remote restrictions
-- Mobile development required but missing from resume
-- Hard language/framework requirement not met
-- Strict on-site requirement
-- Security clearance required
+Detect red flags where applicable (severity "critical" = likely disqualifying, "warning" = worth noting):
+- US-only remote restrictions (critical)
+- Mobile development required but missing from resume (critical)
+- Hard language/framework requirement not met (critical)
+- Strict on-site requirement (warning or critical depending on context)
+- Security clearance required (critical)
+- Significant experience gap, e.g. 8+ years required vs 2 on resume (warning)
+For each red flag, include a short verbatim "quote" from the job posting that proves it.
 
 <resume>
 ${resumeText}

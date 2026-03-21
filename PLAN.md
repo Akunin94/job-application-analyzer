@@ -96,7 +96,7 @@
 - [ ] **Resume suggestions** — AI gives specific resume edits per job posting
 - [ ] **Job URL parser** — paste LinkedIn/HH/Indeed URL, scrape job text automatically
 - [x] **Cover letter editor** — edit generated letter in UI, export as .docx
-- [ ] **Red flags drill-down** — explain each red flag with source quote from job posting
+- [x] **Red flags drill-down** — explain each red flag with source quote from job posting
 - [ ] **Auth (Clerk/Auth.js)** — persist history in DB instead of localStorage
 - [ ] **PDF export** — download full analysis report as PDF
 - [ ] **Resume versioning** — store multiple resume versions, pick one per analysis

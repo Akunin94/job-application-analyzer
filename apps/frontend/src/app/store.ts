@@ -22,7 +22,11 @@ export interface AnalysisResult {
     priority: 'critical' | 'important' | 'nice-to-have';
     context: string;
   }>;
-  redFlags: string[];
+  redFlags: Array<{
+    flag: string;
+    quote: string;
+    severity: 'warning' | 'critical';
+  }>;
   recommendations: string[];
   keywords: { matched: string[]; missing: string[] };
   coverLetterOutline: string;

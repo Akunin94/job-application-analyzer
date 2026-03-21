@@ -49,6 +49,7 @@ export async function streamAnalysis(
     sendEvent(res, 'strengths', parsed.strengths);
     sendEvent(res, 'gaps', parsed.skillGaps);
     sendEvent(res, 'recommendations', parsed.recommendations);
+    sendEvent(res, 'red_flags', parsed.redFlags);
     sendEvent(res, 'done', null);
   } catch (err) {
     sendEvent(res, 'error', {

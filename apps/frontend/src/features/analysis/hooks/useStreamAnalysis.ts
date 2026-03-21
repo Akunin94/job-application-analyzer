@@ -51,6 +51,10 @@ export function useStreamAnalysis() {
           setPartial(p => ({ ...p, recommendations: acc.recommendations }));
           break;
         }
+        case 'red_flags': {
+          acc.redFlags = event.data as AnalysisResult['redFlags'];
+          break;
+        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
@@ -66,7 +70,7 @@ export function useStreamAnalysis() {
             },
             strengths: acc.strengths ?? [],
             skillGaps: acc.skillGaps ?? [],
-            redFlags: [],
+            redFlags: acc.redFlags ?? [],
             recommendations: acc.recommendations ?? [],
             keywords: { matched: [], missing: [] },
             coverLetterOutline: '',

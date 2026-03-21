@@ -6,6 +6,12 @@ const skillGapSchema = z.object({
   context: z.string(),
 });
 
+const redFlagSchema = z.object({
+  flag: z.string(),
+  quote: z.string(),
+  severity: z.enum(['warning', 'critical']),
+});
+
 export const analysisResultSchema = z.object({
   matchScore: z.number().min(0).max(100),
   confidence: z.enum(['low', 'medium', 'high']),
@@ -20,7 +26,7 @@ export const analysisResultSchema = z.object({
   }),
   strengths: z.array(z.string()),
   skillGaps: z.array(skillGapSchema),
-  redFlags: z.array(z.string()),
+  redFlags: z.array(redFlagSchema),
   recommendations: z.array(z.string()),
   keywords: z.object({
     matched: z.array(z.string()),

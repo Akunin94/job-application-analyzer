@@ -76,7 +76,7 @@ describe('POST /api/analyze/cover-letter', () => {
           },
           strengths: ['React'],
           skillGaps: [],
-          redFlags: [],
+          redFlags: [{ flag: 'US-only remote', quote: 'Must be in the US', severity: 'critical' }],
           recommendations: [],
           keywords: { matched: [], missing: [] },
           coverLetterOutline: '',

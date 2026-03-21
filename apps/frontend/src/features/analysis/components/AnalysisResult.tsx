@@ -5,6 +5,7 @@ import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { MatchScoreCard } from './MatchScoreCard';
+import { RedFlagList } from './RedFlagList';
 import { SkillGapList } from './SkillGapList';
 import { SkillRadarChart } from './SkillRadarChart';
 
@@ -90,14 +91,7 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-1.5">
-              {result.redFlags.map((f, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="mt-0.5 shrink-0 text-destructive">⚑</span>
-                  {f}
-                </li>
-              ))}
-            </ul>
+            <RedFlagList flags={result.redFlags} />
           </CardContent>
         </Card>
       )}

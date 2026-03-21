@@ -49,6 +49,7 @@ describe('useStreamAnalysis', () => {
     expect(analysis?.matchScore).toBe(85);
     expect(analysis?.confidence).toBe('high');
     expect(analysis?.categoryScores.technicalSkills).toBe(80);
+    expect(analysis?.redFlags[0]).toMatchObject({ flag: 'US-only remote', severity: 'critical' });
   });
 
   it('adds entry to history on done', async () => {
