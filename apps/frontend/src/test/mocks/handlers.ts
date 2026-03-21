@@ -28,6 +28,7 @@ export const handlers = [
       'event: gaps\ndata: [{"skill":"Kubernetes","priority":"important","context":"Used in CI/CD"}]\n\n',
       'event: recommendations\ndata: ["Learn Kubernetes","Get AWS cert"]\n\n',
       'event: red_flags\ndata: [{"flag":"US-only remote","quote":"Must be based in the United States","severity":"critical"}]\n\n',
+      'event: salary\ndata: {"min":90000,"max":130000,"currency":"USD","period":"year","confidence":"medium","notes":"Inferred from senior React/Node.js role in US market"}\n\n',
       'event: done\ndata: null\n\n',
     );
     return new HttpResponse(body, {

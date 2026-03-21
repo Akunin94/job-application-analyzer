@@ -55,6 +55,10 @@ export function useStreamAnalysis() {
           acc.redFlags = event.data as AnalysisResult['redFlags'];
           break;
         }
+        case 'salary': {
+          acc.salaryEstimate = event.data as AnalysisResult['salaryEstimate'];
+          break;
+        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
@@ -74,6 +78,7 @@ export function useStreamAnalysis() {
             recommendations: acc.recommendations ?? [],
             keywords: { matched: [], missing: [] },
             coverLetterOutline: '',
+            salaryEstimate: acc.salaryEstimate ?? null,
           };
           setAnalysis(result);
           addToHistory({

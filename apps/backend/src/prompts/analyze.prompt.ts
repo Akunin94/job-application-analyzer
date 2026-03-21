@@ -21,7 +21,11 @@ The JSON must match this exact structure:
   "redFlags": [{ "flag": string, "quote": string, "severity": "warning"|"critical" }],
   "recommendations": <string[]>,
   "keywords": { "matched": string[], "missing": string[] },
-  "coverLetterOutline": <string, brief outline for a cover letter>
+  "coverLetterOutline": <string, brief outline for a cover letter>,
+  "salaryEstimate": <null if truly impossible to estimate, otherwise:
+    { "min": number, "max": number, "currency": string (ISO 4217),
+      "period": "year"|"month", "confidence": "low"|"medium"|"high",
+      "notes": string (1 sentence: data source or caveat) }>
 }
 
 Evaluate:
@@ -40,6 +44,12 @@ Detect red flags where applicable (severity "critical" = likely disqualifying, "
 - Security clearance required (critical)
 - Significant experience gap, e.g. 8+ years required vs 2 on resume (warning)
 For each red flag, include a short verbatim "quote" from the job posting that proves it.
+
+Estimate salary range:
+- Use any explicit salary info from the posting first (confidence: "high")
+- Otherwise infer from role title, seniority, tech stack, and location signals (confidence: "low" or "medium")
+- Use annual USD by default; use local currency + "month" if the posting uses monthly figures
+- Return null only if the role is too ambiguous to estimate at all
 
 <resume>
 ${resumeText}

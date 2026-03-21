@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { MatchScoreCard } from './MatchScoreCard';
 import { RedFlagList } from './RedFlagList';
+import { SalaryEstimateCard } from './SalaryEstimateCard';
 import { SkillGapList } from './SkillGapList';
 import { SkillRadarChart } from './SkillRadarChart';
 
@@ -25,6 +26,8 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
         <MatchScoreCard score={result.matchScore} confidence={result.confidence} />
         <SkillRadarChart categoryScores={result.categoryScores} />
       </div>
+
+      {result.salaryEstimate && <SalaryEstimateCard estimate={result.salaryEstimate} />}
 
       {result.strengths.length > 0 && (
         <Card>

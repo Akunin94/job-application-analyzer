@@ -12,6 +12,15 @@ const redFlagSchema = z.object({
   severity: z.enum(['warning', 'critical']),
 });
 
+const salaryEstimateSchema = z.object({
+  min: z.number().nonnegative(),
+  max: z.number().nonnegative(),
+  currency: z.string(),
+  period: z.enum(['year', 'month']),
+  confidence: z.enum(['low', 'medium', 'high']),
+  notes: z.string(),
+});
+
 export const analysisResultSchema = z.object({
   matchScore: z.number().min(0).max(100),
   confidence: z.enum(['low', 'medium', 'high']),
@@ -33,6 +42,7 @@ export const analysisResultSchema = z.object({
     missing: z.array(z.string()),
   }),
   coverLetterOutline: z.string(),
+  salaryEstimate: salaryEstimateSchema.nullable(),
 });
 
 export const analyzeRequestSchema = z.object({

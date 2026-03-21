@@ -50,6 +50,7 @@ describe('useStreamAnalysis', () => {
     expect(analysis?.confidence).toBe('high');
     expect(analysis?.categoryScores.technicalSkills).toBe(80);
     expect(analysis?.redFlags[0]).toMatchObject({ flag: 'US-only remote', severity: 'critical' });
+    expect(analysis?.salaryEstimate).toMatchObject({ min: 90000, max: 130000, currency: 'USD' });
   });
 
   it('adds entry to history on done', async () => {

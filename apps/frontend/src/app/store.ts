@@ -30,6 +30,14 @@ export interface AnalysisResult {
   recommendations: string[];
   keywords: { matched: string[]; missing: string[] };
   coverLetterOutline: string;
+  salaryEstimate: {
+    min: number;
+    max: number;
+    currency: string;
+    period: 'year' | 'month';
+    confidence: 'low' | 'medium' | 'high';
+    notes: string;
+  } | null;
 }
 
 export interface HistoryEntry {

@@ -80,6 +80,14 @@ describe('POST /api/analyze/cover-letter', () => {
           recommendations: [],
           keywords: { matched: [], missing: [] },
           coverLetterOutline: '',
+          salaryEstimate: {
+            min: 90000,
+            max: 130000,
+            currency: 'USD',
+            period: 'year',
+            confidence: 'medium',
+            notes: 'Market rate',
+          },
         },
       });
 

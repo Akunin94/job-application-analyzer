@@ -103,7 +103,7 @@
 
 ### Medium Priority
 
-- [ ] **Salary estimation** — AI estimates salary range from job posting + market data
+- [x] **Salary estimation** — AI estimates salary range from job posting + market data
 - [ ] **Skills roadmap** — learning plan for closing skill gaps with resources/links
 - [ ] **ATS score** — estimate whether resume passes automated keyword filters
 - [ ] **Company research** — auto-fetch company info (Glassdoor, LinkedIn)
