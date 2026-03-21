@@ -85,3 +85,36 @@
 ---
 
 **Critical path:** Phase 1 → 2 → 3 → 4 (backend ready) → 5 → 6 → 7 → 8 (core feature done) → 9 → 10
+
+---
+
+## Backlog — Future Features
+
+### High Priority
+
+- [ ] **Batch analysis** — upload multiple job postings, rank them by match score
+- [ ] **Resume suggestions** — AI gives specific resume edits per job posting
+- [ ] **Job URL parser** — paste LinkedIn/HH/Indeed URL, scrape job text automatically
+- [x] **Cover letter editor** — edit generated letter in UI, export as .docx
+- [ ] **Red flags drill-down** — explain each red flag with source quote from job posting
+- [ ] **Auth (Clerk/Auth.js)** — persist history in DB instead of localStorage
+- [ ] **PDF export** — download full analysis report as PDF
+- [ ] **Resume versioning** — store multiple resume versions, pick one per analysis
+
+### Medium Priority
+
+- [ ] **Salary estimation** — AI estimates salary range from job posting + market data
+- [ ] **Skills roadmap** — learning plan for closing skill gaps with resources/links
+- [ ] **ATS score** — estimate whether resume passes automated keyword filters
+- [ ] **Company research** — auto-fetch company info (Glassdoor, LinkedIn)
+- [ ] **Interview prep** — generate likely interview questions based on job posting
+- [ ] **Follow-up email template** — post-interview follow-up generator
+- [ ] **Light theme** — currently dark-only
+
+### Nice-to-have
+
+- [ ] **Browser extension** — analyze job posting directly on HH/LinkedIn page
+- [ ] **Telegram bot** — send job posting, get analysis back
+- [ ] **Notion/Airtable webhook** — track applications in external tools
+- [ ] **Public share link** — share analysis results via URL
+- [ ] **Multi-language** — support resumes and job postings in non-English
