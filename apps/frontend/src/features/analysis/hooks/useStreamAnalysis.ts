@@ -59,6 +59,10 @@ export function useStreamAnalysis() {
           acc.salaryEstimate = event.data as AnalysisResult['salaryEstimate'];
           break;
         }
+        case 'ats_score': {
+          acc.atsScore = event.data as AnalysisResult['atsScore'];
+          break;
+        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
@@ -79,6 +83,7 @@ export function useStreamAnalysis() {
             keywords: { matched: [], missing: [] },
             coverLetterOutline: '',
             salaryEstimate: acc.salaryEstimate ?? null,
+            atsScore: acc.atsScore ?? null,
           };
           setAnalysis(result);
           addToHistory({

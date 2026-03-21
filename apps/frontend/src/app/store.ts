@@ -38,6 +38,12 @@ export interface AnalysisResult {
     confidence: 'low' | 'medium' | 'high';
     notes: string;
   } | null;
+  atsScore: {
+    score: number;
+    verdict: 'likely_pass' | 'borderline' | 'likely_reject';
+    missingKeywords: string[];
+    formattingTips: string[];
+  } | null;
 }
 
 export interface HistoryEntry {

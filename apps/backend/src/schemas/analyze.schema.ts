@@ -21,6 +21,13 @@ const salaryEstimateSchema = z.object({
   notes: z.string(),
 });
 
+const atsScoreSchema = z.object({
+  score: z.number().min(0).max(100),
+  verdict: z.enum(['likely_pass', 'borderline', 'likely_reject']),
+  missingKeywords: z.array(z.string()),
+  formattingTips: z.array(z.string()),
+});
+
 export const analysisResultSchema = z.object({
   matchScore: z.number().min(0).max(100),
   confidence: z.enum(['low', 'medium', 'high']),
@@ -43,6 +50,7 @@ export const analysisResultSchema = z.object({
   }),
   coverLetterOutline: z.string(),
   salaryEstimate: salaryEstimateSchema.nullable(),
+  atsScore: atsScoreSchema.nullable(),
 });
 
 export const analyzeRequestSchema = z.object({

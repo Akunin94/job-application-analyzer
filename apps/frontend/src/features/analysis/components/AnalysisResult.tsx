@@ -4,6 +4,7 @@ import { AnalysisResult as AnalysisResultType } from '@/app/store';
 import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { AtsScoreCard } from './AtsScoreCard';
 import { MatchScoreCard } from './MatchScoreCard';
 import { RedFlagList } from './RedFlagList';
 import { SalaryEstimateCard } from './SalaryEstimateCard';
@@ -28,6 +29,8 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
       </div>
 
       {result.salaryEstimate && <SalaryEstimateCard estimate={result.salaryEstimate} />}
+
+      {result.atsScore && <AtsScoreCard atsScore={result.atsScore} />}
 
       {result.strengths.length > 0 && (
         <Card>

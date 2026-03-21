@@ -25,7 +25,12 @@ The JSON must match this exact structure:
   "salaryEstimate": <null if truly impossible to estimate, otherwise:
     { "min": number, "max": number, "currency": string (ISO 4217),
       "period": "year"|"month", "confidence": "low"|"medium"|"high",
-      "notes": string (1 sentence: data source or caveat) }>
+      "notes": string (1 sentence: data source or caveat) }>,
+  "atsScore": <null if insufficient data, otherwise:
+    { "score": number 0-100,
+      "verdict": "likely_pass"|"borderline"|"likely_reject",
+      "missingKeywords": string[],
+      "formattingTips": string[] }>
 }
 
 Evaluate:
@@ -50,6 +55,13 @@ Estimate salary range:
 - Otherwise infer from role title, seniority, tech stack, and location signals (confidence: "low" or "medium")
 - Use annual USD by default; use local currency + "month" if the posting uses monthly figures
 - Return null only if the role is too ambiguous to estimate at all
+
+Estimate ATS score (Applicant Tracking System likelihood of passing automated filters):
+- score: 0-100 based on keyword density match between resume and job posting
+- verdict: "likely_pass" (≥70), "borderline" (40-69), "likely_reject" (<40)
+- missingKeywords: important JD keywords/phrases absent from resume (max 10)
+- formattingTips: ATS-friendly formatting suggestions relevant to this resume (e.g. avoid tables, add missing section headers, spell out acronyms); max 4 tips
+- Return null only if the job posting is too vague to extract keywords
 
 <resume>
 ${resumeText}
