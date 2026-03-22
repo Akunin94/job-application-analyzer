@@ -108,7 +108,7 @@
 - [x] **ATS score** — estimate whether resume passes automated keyword filters
 - [x] **Company research** — auto-fetch company info (Glassdoor, LinkedIn)
 - [x] **Interview prep** — generate likely interview questions based on job posting
-- [ ] **Follow-up email template** — post-interview follow-up generator
+- [x] **Follow-up email template** — post-interview follow-up generator
 - [ ] **Light theme** — currently dark-only
 
 ### Nice-to-have

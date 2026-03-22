@@ -108,6 +108,16 @@ export const coverLetterRequestSchema = z.object({
   analysis: analysisResultSchema,
 });
 
+export const followUpRequestSchema = z.object({
+  resumeText: z.string().min(1, 'Resume text is required'),
+  jobPosting: z.string().min(1, 'Job posting is required'),
+  analysis: analysisResultSchema,
+  interviewerName: z.string().default(''),
+  interviewDate: z.string().default(''),
+  keyPoints: z.string().default(''),
+});
+
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 export type CoverLetterRequest = z.infer<typeof coverLetterRequestSchema>;
+export type FollowUpRequest = z.infer<typeof followUpRequestSchema>;
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;

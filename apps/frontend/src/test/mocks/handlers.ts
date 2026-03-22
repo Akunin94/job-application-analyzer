@@ -41,6 +41,17 @@ export const handlers = [
     });
   }),
 
+  http.post(`${BASE}/api/analyze/follow-up`, () => {
+    const body = sseStream(
+      'event: follow_up\ndata: "Subject: Thank you — Senior Developer Interview"\n\n',
+      'event: follow_up\ndata: "\\n\\nDear Sarah,\\n\\nThank you for taking the time to speak with me yesterday."\n\n',
+      'event: done\ndata: null\n\n',
+    );
+    return new HttpResponse(body, {
+      headers: { 'Content-Type': 'text/event-stream' },
+    });
+  }),
+
   http.post(`${BASE}/api/analyze/cover-letter`, () => {
     const body = sseStream(
       'event: cover_letter\ndata: "Dear Hiring Manager,"\n\n',

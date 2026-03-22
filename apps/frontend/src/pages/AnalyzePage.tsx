@@ -7,6 +7,7 @@ import {
   AnalysisResultSkeleton,
 } from '@/features/analysis/components/AnalysisResult';
 import { CoverLetterPanel } from '@/features/analysis/components/CoverLetterPanel';
+import { FollowUpEmailPanel } from '@/features/analysis/components/FollowUpEmailPanel';
 import { StreamingOutput } from '@/features/analysis/components/StreamingOutput';
 import { useStreamAnalysis } from '@/features/analysis/hooks/useStreamAnalysis';
 import { AnalysisFormValues } from '@/features/analysis/schemas/analysis.schema';
@@ -64,11 +65,18 @@ export default function AnalyzePage() {
         {jobPosting && (
           <>
             <Separator className="my-6" />
-            <CoverLetterPanel
-              resumeText={resumeText}
-              jobPosting={jobPosting}
-              analysis={currentAnalysis}
-            />
+            <div className="space-y-4">
+              <CoverLetterPanel
+                resumeText={resumeText}
+                jobPosting={jobPosting}
+                analysis={currentAnalysis}
+              />
+              <FollowUpEmailPanel
+                resumeText={resumeText}
+                jobPosting={jobPosting}
+                analysis={currentAnalysis}
+              />
+            </div>
           </>
         )}
       </div>

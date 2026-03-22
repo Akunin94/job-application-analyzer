@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { env } from '../config/env.js';
 import { buildAnalyzePrompt } from '../prompts/analyze.prompt.js';
 import { buildCoverLetterPrompt } from '../prompts/coverletter.prompt.js';
+import { buildFollowUpPrompt } from '../prompts/followup.prompt.js';
 import { AnalysisResult, analysisResultSchema } from '../schemas/analyze.schema.js';
 
 const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
@@ -100,6 +101,56 @@ export async function streamCoverLetter(
   } catch (err) {
     sendEvent(res, 'error', {
       message: err instanceof Error ? err.message : 'Cover letter generation failed',
+    });
+  } finally {
+    res.end();
+  }
+}
+
+export async function streamFollowUpEmail(
+  res: Response,
+  resumeText: string,
+  jobPosting: string,
+  analysis: AnalysisResult,
+  interviewerName: string,
+  interviewDate: string,
+  keyPoints: string,
+): Promise<void> {
+  setSSEHeaders(res);
+
+  try {
+    const stream = anthropic.messages.stream({
+      model: MODEL,
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: buildFollowUpPrompt(
+            resumeText,
+            jobPosting,
+            analysis,
+            interviewerName,
+            interviewDate,
+            keyPoints,
+          ),
+        },
+      ],
+    });
+
+    for await (const chunk of stream) {
+      if (
+        chunk.type === 'content_block_delta' &&
+        chunk.delta.type === 'text_delta' &&
+        chunk.delta.text
+      ) {
+        sendEvent(res, 'follow_up', chunk.delta.text);
+      }
+    }
+
+    sendEvent(res, 'done', null);
+  } catch (err) {
+    sendEvent(res, 'error', {
+      message: err instanceof Error ? err.message : 'Follow-up email generation failed',
     });
   } finally {
     res.end();
