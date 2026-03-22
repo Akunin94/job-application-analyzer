@@ -107,7 +107,7 @@
 - [x] **Skills roadmap** — learning plan for closing skill gaps with resources/links
 - [x] **ATS score** — estimate whether resume passes automated keyword filters
 - [ ] **Company research** — auto-fetch company info (Glassdoor, LinkedIn)
-- [ ] **Interview prep** — generate likely interview questions based on job posting
+- [x] **Interview prep** — generate likely interview questions based on job posting
 - [ ] **Follow-up email template** — post-interview follow-up generator
 - [ ] **Light theme** — currently dark-only
 

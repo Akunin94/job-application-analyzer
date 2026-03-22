@@ -28,6 +28,13 @@ const atsScoreSchema = z.object({
   formattingTips: z.array(z.string()),
 });
 
+const interviewQuestionSchema = z.object({
+  question: z.string(),
+  category: z.enum(['technical', 'behavioral', 'situational', 'culture-fit']),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+  tip: z.string(),
+});
+
 const roadmapResourceSchema = z.object({
   title: z.string(),
   type: z.enum(['course', 'docs', 'book', 'tutorial', 'practice']),
@@ -64,6 +71,7 @@ export const analysisResultSchema = z.object({
   salaryEstimate: salaryEstimateSchema.nullable(),
   atsScore: atsScoreSchema.nullable(),
   skillsRoadmap: z.array(skillsRoadmapItemSchema).nullable(),
+  interviewPrep: z.array(interviewQuestionSchema).nullable(),
 });
 
 export const analyzeRequestSchema = z.object({

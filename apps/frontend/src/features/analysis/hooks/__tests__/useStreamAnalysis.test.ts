@@ -56,6 +56,10 @@ describe('useStreamAnalysis', () => {
       skill: 'Kubernetes',
       priority: 'important',
     });
+    expect(analysis?.interviewPrep?.[0]).toMatchObject({
+      category: 'technical',
+      difficulty: 'medium',
+    });
   });
 
   it('adds entry to history on done', async () => {

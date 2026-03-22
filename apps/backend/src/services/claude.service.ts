@@ -32,7 +32,7 @@ export async function streamAnalysis(
 
     const stream = anthropic.messages.stream({
       model: MODEL,
-      max_tokens: 2048,
+      max_tokens: 4096,
       messages: [{ role: 'user', content: buildAnalyzePrompt(resumeText, jobPosting) }],
     });
 
@@ -53,6 +53,7 @@ export async function streamAnalysis(
     sendEvent(res, 'salary', parsed.salaryEstimate);
     sendEvent(res, 'ats_score', parsed.atsScore);
     sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
+    sendEvent(res, 'interview_prep', parsed.interviewPrep);
     sendEvent(res, 'done', null);
   } catch (err) {
     sendEvent(res, 'error', {

@@ -35,7 +35,12 @@ The JSON must match this exact structure:
     { "skill": string,
       "priority": "critical"|"important"|"nice-to-have",
       "timeEstimate": string (e.g. "2–4 weeks"),
-      "resources": [{ "title": string, "type": "course"|"docs"|"book"|"tutorial"|"practice" }] }>
+      "resources": [{ "title": string, "type": "course"|"docs"|"book"|"tutorial"|"practice" }] }>,
+  "interviewPrep": <array of 6-10 questions tailored to this role and resume:
+    { "question": string,
+      "category": "technical"|"behavioral"|"situational"|"culture-fit",
+      "difficulty": "easy"|"medium"|"hard",
+      "tip": string (1-2 sentence answering hint, e.g. STAR method cue or what the interviewer is really assessing) }>
 }
 
 Evaluate:
@@ -74,6 +79,13 @@ Build a skills roadmap for each skill gap:
 - resources: 2–4 real, well-known resources (e.g. official docs, Udemy, Coursera, freeCodeCamp, book titles); DO NOT invent URLs — titles only
 - Order: critical gaps first, then important, then nice-to-have
 - Return null only if skillGaps is empty
+
+Generate interview prep questions:
+- 6–10 questions total, mix of: technical (role-specific), behavioral (STAR-format), situational (hypothetical scenarios), culture-fit
+- Weight toward categories most relevant to the role (e.g. more technical for senior engineering roles)
+- difficulty: "easy" for warm-up/basics, "medium" for standard, "hard" for stretch/senior-level
+- tip: what the interviewer is really assessing, and a brief hint (STAR cue, concept to mention, etc.)
+- Questions must be specific to this role and resume — not generic
 
 <resume>
 ${resumeText}

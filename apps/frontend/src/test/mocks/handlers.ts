@@ -31,6 +31,7 @@ export const handlers = [
       'event: salary\ndata: {"min":90000,"max":130000,"currency":"USD","period":"year","confidence":"medium","notes":"Inferred from senior React/Node.js role in US market"}\n\n',
       'event: ats_score\ndata: {"score":72,"verdict":"likely_pass","missingKeywords":["CI/CD","Docker"],"formattingTips":["Add a Skills section","Use standard section headers"]}\n\n',
       'event: skills_roadmap\ndata: [{"skill":"Kubernetes","priority":"important","timeEstimate":"4-6 weeks","resources":[{"title":"Kubernetes Official Docs","type":"docs"},{"title":"Kubernetes for Developers (Udemy)","type":"course"}]}]\n\n',
+      'event: interview_prep\ndata: [{"question":"Describe your experience with React hooks.","category":"technical","difficulty":"medium","tip":"Mention useState, useEffect, and any custom hooks you have built."}]\n\n',
       'event: done\ndata: null\n\n',
     );
     return new HttpResponse(body, {

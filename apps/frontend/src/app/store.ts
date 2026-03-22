@@ -53,6 +53,12 @@ export interface AnalysisResult {
       type: 'course' | 'docs' | 'book' | 'tutorial' | 'practice';
     }>;
   }> | null;
+  interviewPrep: Array<{
+    question: string;
+    category: 'technical' | 'behavioral' | 'situational' | 'culture-fit';
+    difficulty: 'easy' | 'medium' | 'hard';
+    tip: string;
+  }> | null;
 }
 
 export interface HistoryEntry {
