@@ -44,6 +44,15 @@ export interface AnalysisResult {
     missingKeywords: string[];
     formattingTips: string[];
   } | null;
+  skillsRoadmap: Array<{
+    skill: string;
+    priority: 'critical' | 'important' | 'nice-to-have';
+    timeEstimate: string;
+    resources: Array<{
+      title: string;
+      type: 'course' | 'docs' | 'book' | 'tutorial' | 'practice';
+    }>;
+  }> | null;
 }
 
 export interface HistoryEntry {

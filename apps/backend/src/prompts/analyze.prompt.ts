@@ -30,7 +30,12 @@ The JSON must match this exact structure:
     { "score": number 0-100,
       "verdict": "likely_pass"|"borderline"|"likely_reject",
       "missingKeywords": string[],
-      "formattingTips": string[] }>
+      "formattingTips": string[] }>,
+  "skillsRoadmap": <null if no skill gaps, otherwise array of:
+    { "skill": string,
+      "priority": "critical"|"important"|"nice-to-have",
+      "timeEstimate": string (e.g. "2–4 weeks"),
+      "resources": [{ "title": string, "type": "course"|"docs"|"book"|"tutorial"|"practice" }] }>
 }
 
 Evaluate:
@@ -62,6 +67,13 @@ Estimate ATS score (Applicant Tracking System likelihood of passing automated fi
 - missingKeywords: important JD keywords/phrases absent from resume (max 10)
 - formattingTips: ATS-friendly formatting suggestions relevant to this resume (e.g. avoid tables, add missing section headers, spell out acronyms); max 4 tips
 - Return null only if the job posting is too vague to extract keywords
+
+Build a skills roadmap for each skill gap:
+- One entry per skillGap item, same priority
+- timeEstimate: realistic calendar estimate to reach job-ready proficiency (e.g. "1–2 weeks", "1–3 months")
+- resources: 2–4 real, well-known resources (e.g. official docs, Udemy, Coursera, freeCodeCamp, book titles); DO NOT invent URLs — titles only
+- Order: critical gaps first, then important, then nice-to-have
+- Return null only if skillGaps is empty
 
 <resume>
 ${resumeText}

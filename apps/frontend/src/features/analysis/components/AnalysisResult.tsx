@@ -10,6 +10,7 @@ import { RedFlagList } from './RedFlagList';
 import { SalaryEstimateCard } from './SalaryEstimateCard';
 import { SkillGapList } from './SkillGapList';
 import { SkillRadarChart } from './SkillRadarChart';
+import { SkillsRoadmapCard } from './SkillsRoadmapCard';
 
 interface AnalysisResultDashboardProps {
   result: AnalysisResultType;
@@ -65,6 +66,10 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
             <SkillGapList gaps={result.skillGaps} />
           </CardContent>
         </Card>
+      )}
+
+      {result.skillsRoadmap && result.skillsRoadmap.length > 0 && (
+        <SkillsRoadmapCard roadmap={result.skillsRoadmap} />
       )}
 
       {result.recommendations.length > 0 && (

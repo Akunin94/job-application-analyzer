@@ -63,6 +63,10 @@ export function useStreamAnalysis() {
           acc.atsScore = event.data as AnalysisResult['atsScore'];
           break;
         }
+        case 'skills_roadmap': {
+          acc.skillsRoadmap = event.data as AnalysisResult['skillsRoadmap'];
+          break;
+        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
@@ -84,6 +88,7 @@ export function useStreamAnalysis() {
             coverLetterOutline: '',
             salaryEstimate: acc.salaryEstimate ?? null,
             atsScore: acc.atsScore ?? null,
+            skillsRoadmap: acc.skillsRoadmap ?? null,
           };
           setAnalysis(result);
           addToHistory({

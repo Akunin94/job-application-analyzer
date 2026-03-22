@@ -52,6 +52,10 @@ describe('useStreamAnalysis', () => {
     expect(analysis?.redFlags[0]).toMatchObject({ flag: 'US-only remote', severity: 'critical' });
     expect(analysis?.salaryEstimate).toMatchObject({ min: 90000, max: 130000, currency: 'USD' });
     expect(analysis?.atsScore).toMatchObject({ score: 72, verdict: 'likely_pass' });
+    expect(analysis?.skillsRoadmap?.[0]).toMatchObject({
+      skill: 'Kubernetes',
+      priority: 'important',
+    });
   });
 
   it('adds entry to history on done', async () => {

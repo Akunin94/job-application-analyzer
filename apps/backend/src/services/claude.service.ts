@@ -52,6 +52,7 @@ export async function streamAnalysis(
     sendEvent(res, 'red_flags', parsed.redFlags);
     sendEvent(res, 'salary', parsed.salaryEstimate);
     sendEvent(res, 'ats_score', parsed.atsScore);
+    sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
     sendEvent(res, 'done', null);
   } catch (err) {
     sendEvent(res, 'error', {

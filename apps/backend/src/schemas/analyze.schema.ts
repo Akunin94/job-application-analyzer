@@ -28,6 +28,18 @@ const atsScoreSchema = z.object({
   formattingTips: z.array(z.string()),
 });
 
+const roadmapResourceSchema = z.object({
+  title: z.string(),
+  type: z.enum(['course', 'docs', 'book', 'tutorial', 'practice']),
+});
+
+const skillsRoadmapItemSchema = z.object({
+  skill: z.string(),
+  priority: z.enum(['critical', 'important', 'nice-to-have']),
+  timeEstimate: z.string(),
+  resources: z.array(roadmapResourceSchema),
+});
+
 export const analysisResultSchema = z.object({
   matchScore: z.number().min(0).max(100),
   confidence: z.enum(['low', 'medium', 'high']),
@@ -51,6 +63,7 @@ export const analysisResultSchema = z.object({
   coverLetterOutline: z.string(),
   salaryEstimate: salaryEstimateSchema.nullable(),
   atsScore: atsScoreSchema.nullable(),
+  skillsRoadmap: z.array(skillsRoadmapItemSchema).nullable(),
 });
 
 export const analyzeRequestSchema = z.object({
