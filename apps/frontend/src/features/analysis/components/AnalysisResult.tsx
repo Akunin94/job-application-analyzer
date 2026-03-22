@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { AtsScoreCard } from './AtsScoreCard';
 import { InterviewPrepCard } from './InterviewPrepCard';
+import { ResumeSuggestionsCard } from './ResumeSuggestionsCard';
 import { MatchScoreCard } from './MatchScoreCard';
 import { RedFlagList } from './RedFlagList';
 import { SalaryEstimateCard } from './SalaryEstimateCard';
@@ -140,6 +141,10 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
             )}
           </CardContent>
         </Card>
+      )}
+
+      {result.resumeSuggestions && result.resumeSuggestions.length > 0 && (
+        <ResumeSuggestionsCard suggestions={result.resumeSuggestions} />
       )}
 
       {result.interviewPrep && result.interviewPrep.length > 0 && (

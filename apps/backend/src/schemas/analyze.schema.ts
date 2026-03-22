@@ -28,6 +28,14 @@ const atsScoreSchema = z.object({
   formattingTips: z.array(z.string()),
 });
 
+const resumeSuggestionSchema = z.object({
+  section: z.string(),
+  type: z.enum(['rewrite', 'add', 'remove', 'strengthen']),
+  current: z.string(),
+  suggestion: z.string(),
+  reason: z.string(),
+});
+
 const interviewQuestionSchema = z.object({
   question: z.string(),
   category: z.enum(['technical', 'behavioral', 'situational', 'culture-fit']),
@@ -72,6 +80,7 @@ export const analysisResultSchema = z.object({
   atsScore: atsScoreSchema.nullable(),
   skillsRoadmap: z.array(skillsRoadmapItemSchema).nullable(),
   interviewPrep: z.array(interviewQuestionSchema).nullable(),
+  resumeSuggestions: z.array(resumeSuggestionSchema).nullable(),
 });
 
 export const analyzeRequestSchema = z.object({

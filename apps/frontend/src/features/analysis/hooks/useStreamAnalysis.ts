@@ -71,6 +71,10 @@ export function useStreamAnalysis() {
           acc.interviewPrep = event.data as AnalysisResult['interviewPrep'];
           break;
         }
+        case 'resume_suggestions': {
+          acc.resumeSuggestions = event.data as AnalysisResult['resumeSuggestions'];
+          break;
+        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
@@ -94,6 +98,7 @@ export function useStreamAnalysis() {
             atsScore: acc.atsScore ?? null,
             skillsRoadmap: acc.skillsRoadmap ?? null,
             interviewPrep: acc.interviewPrep ?? null,
+            resumeSuggestions: acc.resumeSuggestions ?? null,
           };
           setAnalysis(result);
           addToHistory({

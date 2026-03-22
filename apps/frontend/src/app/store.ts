@@ -59,6 +59,13 @@ export interface AnalysisResult {
     difficulty: 'easy' | 'medium' | 'hard';
     tip: string;
   }> | null;
+  resumeSuggestions: Array<{
+    section: string;
+    type: 'rewrite' | 'add' | 'remove' | 'strengthen';
+    current: string;
+    suggestion: string;
+    reason: string;
+  }> | null;
 }
 
 export interface HistoryEntry {

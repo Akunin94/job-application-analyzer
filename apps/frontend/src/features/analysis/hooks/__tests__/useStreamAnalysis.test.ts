@@ -60,6 +60,7 @@ describe('useStreamAnalysis', () => {
       category: 'technical',
       difficulty: 'medium',
     });
+    expect(analysis?.resumeSuggestions?.[0]).toMatchObject({ section: 'Summary', type: 'rewrite' });
   });
 
   it('adds entry to history on done', async () => {

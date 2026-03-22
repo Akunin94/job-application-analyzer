@@ -40,7 +40,13 @@ The JSON must match this exact structure:
     { "question": string,
       "category": "technical"|"behavioral"|"situational"|"culture-fit",
       "difficulty": "easy"|"medium"|"hard",
-      "tip": string (1-2 sentence answering hint, e.g. STAR method cue or what the interviewer is really assessing) }>
+      "tip": string (1-2 sentence answering hint, e.g. STAR method cue or what the interviewer is really assessing) }>,
+  "resumeSuggestions": <4-8 specific, actionable edits to better match this job posting:
+    { "section": string (e.g. "Summary", "Work Experience", "Skills"),
+      "type": "rewrite"|"add"|"remove"|"strengthen",
+      "current": string (verbatim snippet from resume being changed, or "" if adding new content),
+      "suggestion": string (the improved text — ready to paste in),
+      "reason": string (1 sentence: why this change improves the match) }>
 }
 
 Evaluate:
@@ -86,6 +92,14 @@ Generate interview prep questions:
 - difficulty: "easy" for warm-up/basics, "medium" for standard, "hard" for stretch/senior-level
 - tip: what the interviewer is really assessing, and a brief hint (STAR cue, concept to mention, etc.)
 - Questions must be specific to this role and resume — not generic
+
+Generate resume suggestions:
+- 4–8 specific edits to make the resume better match this job posting
+- type: "rewrite" = replace existing text, "add" = new bullet/section, "remove" = cut irrelevant content, "strengthen" = improve weak phrasing
+- current: exact snippet from resume (keep short, ≤2 sentences), or "" if adding
+- suggestion: the improved text, ready to paste directly into the resume
+- reason: one sentence on why this improves match score or ATS performance
+- Focus on high-impact changes: summary, relevant bullet points, skills section, missing keywords
 
 <resume>
 ${resumeText}

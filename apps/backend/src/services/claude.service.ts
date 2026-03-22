@@ -54,6 +54,7 @@ export async function streamAnalysis(
     sendEvent(res, 'ats_score', parsed.atsScore);
     sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
     sendEvent(res, 'interview_prep', parsed.interviewPrep);
+    sendEvent(res, 'resume_suggestions', parsed.resumeSuggestions);
     sendEvent(res, 'done', null);
   } catch (err) {
     sendEvent(res, 'error', {
