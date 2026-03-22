@@ -5,6 +5,7 @@ import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { AtsScoreCard } from './AtsScoreCard';
+import { CompanyResearchCard } from './CompanyResearchCard';
 import { InterviewPrepCard } from './InterviewPrepCard';
 import { ResumeSuggestionsCard } from './ResumeSuggestionsCard';
 import { MatchScoreCard } from './MatchScoreCard';
@@ -34,6 +35,8 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
       {result.salaryEstimate && <SalaryEstimateCard estimate={result.salaryEstimate} />}
 
       {result.atsScore && <AtsScoreCard atsScore={result.atsScore} />}
+
+      {result.companyResearch && <CompanyResearchCard research={result.companyResearch} />}
 
       {result.strengths.length > 0 && (
         <Card>

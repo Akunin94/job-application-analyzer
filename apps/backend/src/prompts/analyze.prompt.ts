@@ -46,7 +46,18 @@ The JSON must match this exact structure:
       "type": "rewrite"|"add"|"remove"|"strengthen",
       "current": string (verbatim snippet from resume being changed, or "" if adding new content),
       "suggestion": string (the improved text — ready to paste in),
-      "reason": string (1 sentence: why this change improves the match) }>
+      "reason": string (1 sentence: why this change improves the match) }>,
+  "companyResearch": <null if company cannot be identified from the posting, otherwise:
+    { "name": string,
+      "overview": string (2-3 sentences from your training knowledge),
+      "industry": string,
+      "size": string (e.g. "~200 employees", "10,000+", "Unknown"),
+      "funding": string (e.g. "Series B", "Public (NASDAQ: XYZ)", "Bootstrapped", "Unknown"),
+      "techStack": string[] (publicly known stack),
+      "culture": string[] (3-5 culture bullet points from public sources),
+      "interviewProcess": string (what the interview process typically looks like at this company),
+      "confidence": "low"|"medium"|"high" (how well your training data covers this company),
+      "disclaimer": string (1 sentence: note that info is from training data and may be outdated) }>
 }
 
 Evaluate:
@@ -100,6 +111,13 @@ Generate resume suggestions:
 - suggestion: the improved text, ready to paste directly into the resume
 - reason: one sentence on why this improves match score or ATS performance
 - Focus on high-impact changes: summary, relevant bullet points, skills section, missing keywords
+
+Research the company from the job posting:
+- Extract the company name from the posting
+- Use your training knowledge to fill in overview, industry, size, funding, techStack, culture, interviewProcess
+- confidence: "high" = well-known company with extensive public info, "medium" = known but limited data, "low" = little public info
+- disclaimer: always note info comes from training data and may not reflect current state
+- Return null only if the company name cannot be identified at all
 
 <resume>
 ${resumeText}

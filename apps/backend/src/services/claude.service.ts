@@ -55,6 +55,7 @@ export async function streamAnalysis(
     sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
     sendEvent(res, 'interview_prep', parsed.interviewPrep);
     sendEvent(res, 'resume_suggestions', parsed.resumeSuggestions);
+    sendEvent(res, 'company_research', parsed.companyResearch);
     sendEvent(res, 'done', null);
   } catch (err) {
     sendEvent(res, 'error', {

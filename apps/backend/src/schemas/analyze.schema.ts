@@ -48,6 +48,19 @@ const roadmapResourceSchema = z.object({
   type: z.enum(['course', 'docs', 'book', 'tutorial', 'practice']),
 });
 
+const companyResearchSchema = z.object({
+  name: z.string(),
+  overview: z.string(),
+  industry: z.string(),
+  size: z.string(),
+  funding: z.string(),
+  techStack: z.array(z.string()),
+  culture: z.array(z.string()),
+  interviewProcess: z.string(),
+  confidence: z.enum(['low', 'medium', 'high']),
+  disclaimer: z.string(),
+});
+
 const skillsRoadmapItemSchema = z.object({
   skill: z.string(),
   priority: z.enum(['critical', 'important', 'nice-to-have']),
@@ -81,6 +94,7 @@ export const analysisResultSchema = z.object({
   skillsRoadmap: z.array(skillsRoadmapItemSchema).nullable(),
   interviewPrep: z.array(interviewQuestionSchema).nullable(),
   resumeSuggestions: z.array(resumeSuggestionSchema).nullable(),
+  companyResearch: companyResearchSchema.nullable(),
 });
 
 export const analyzeRequestSchema = z.object({

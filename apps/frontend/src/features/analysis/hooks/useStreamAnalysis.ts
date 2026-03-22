@@ -75,6 +75,10 @@ export function useStreamAnalysis() {
           acc.resumeSuggestions = event.data as AnalysisResult['resumeSuggestions'];
           break;
         }
+        case 'company_research': {
+          acc.companyResearch = event.data as AnalysisResult['companyResearch'];
+          break;
+        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
@@ -99,6 +103,7 @@ export function useStreamAnalysis() {
             skillsRoadmap: acc.skillsRoadmap ?? null,
             interviewPrep: acc.interviewPrep ?? null,
             resumeSuggestions: acc.resumeSuggestions ?? null,
+            companyResearch: acc.companyResearch ?? null,
           };
           setAnalysis(result);
           addToHistory({

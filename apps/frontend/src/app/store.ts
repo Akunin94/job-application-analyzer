@@ -66,6 +66,18 @@ export interface AnalysisResult {
     suggestion: string;
     reason: string;
   }> | null;
+  companyResearch: {
+    name: string;
+    overview: string;
+    industry: string;
+    size: string;
+    funding: string;
+    techStack: string[];
+    culture: string[];
+    interviewProcess: string;
+    confidence: 'low' | 'medium' | 'high';
+    disclaimer: string;
+  } | null;
 }
 
 export interface HistoryEntry {

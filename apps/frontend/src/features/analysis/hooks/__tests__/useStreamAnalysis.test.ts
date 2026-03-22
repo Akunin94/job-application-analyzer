@@ -61,6 +61,7 @@ describe('useStreamAnalysis', () => {
       difficulty: 'medium',
     });
     expect(analysis?.resumeSuggestions?.[0]).toMatchObject({ section: 'Summary', type: 'rewrite' });
+    expect(analysis?.companyResearch).toMatchObject({ name: 'Acme Corp', industry: 'Software' });
   });
 
   it('adds entry to history on done', async () => {
