@@ -4,6 +4,7 @@ import AnalyzePage from '@/pages/AnalyzePage';
 import ComparePage from '@/pages/ComparePage';
 import HistoryPage from '@/pages/HistoryPage';
 import HomePage from '@/pages/HomePage';
+import SharePage from '@/pages/SharePage';
 
 export const router = createBrowserRouter([
   {
@@ -16,4 +17,5 @@ export const router = createBrowserRouter([
       { path: 'compare', element: <ComparePage /> },
     ],
   },
+  { path: '/share', element: <SharePage /> },
 ]);

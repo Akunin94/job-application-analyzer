@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Check, Link } from 'lucide-react';
 import { useState } from 'react';
 import { useStore } from '@/app/store';
 import { AnalysisForm } from '@/features/analysis/components/AnalysisForm';
@@ -15,6 +15,7 @@ import { useResumeStore } from '@/features/resume/hooks/useResumeStore';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Separator } from '@/shared/components/ui/separator';
+import { buildShareUrl } from '@/shared/lib/share';
 
 export default function AnalyzePage() {
   const { resumeText } = useResumeStore();
@@ -22,6 +23,15 @@ export default function AnalyzePage() {
   const { status, start } = useStreamAnalysis();
   const [showForm, setShowForm] = useState(!currentAnalysis);
   const [jobPosting, setJobPosting] = useState('');
+  const [shareCopied, setShareCopied] = useState(false);
+
+  const handleShare = async () => {
+    if (!currentAnalysis) return;
+    const url = buildShareUrl(currentAnalysis);
+    await navigator.clipboard.writeText(url);
+    setShareCopied(true);
+    setTimeout(() => setShareCopied(false), 2000);
+  };
 
   const isLoading = status === 'connecting' || status === 'streaming';
 
@@ -51,15 +61,26 @@ export default function AnalyzePage() {
       <div className="mx-auto max-w-3xl px-6 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-foreground">Analysis Results</h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5 text-muted-foreground"
-            onClick={() => setShowForm(true)}
-          >
-            <ArrowLeft size={14} />
-            New Analysis
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-xs text-muted-foreground"
+              onClick={handleShare}
+            >
+              {shareCopied ? <Check size={13} /> : <Link size={13} />}
+              {shareCopied ? 'Copied!' : 'Share'}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5 text-muted-foreground"
+              onClick={() => setShowForm(true)}
+            >
+              <ArrowLeft size={14} />
+              New Analysis
+            </Button>
+          </div>
         </div>
         <AnalysisResultDashboard result={currentAnalysis} />
         {jobPosting && (
