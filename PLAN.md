@@ -109,7 +109,7 @@
 - [x] **Company research** — auto-fetch company info (Glassdoor, LinkedIn)
 - [x] **Interview prep** — generate likely interview questions based on job posting
 - [x] **Follow-up email template** — post-interview follow-up generator
-- [ ] **Light theme** — currently dark-only
+- [x] **Light theme** — toggle persisted in localStorage, no flash on reload
 
 ### Nice-to-have
 

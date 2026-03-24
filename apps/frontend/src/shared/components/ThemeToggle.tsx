@@ -1,9 +1,15 @@
 import { Moon, Sun } from 'lucide-react';
+import { useEffect } from 'react';
 import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
 import { cn } from '@/shared/lib/cn';
 
 export function ThemeToggle() {
   const [theme, setTheme] = useLocalStorage<'dark' | 'light'>('theme', 'dark');
+
+  // Sync class with stored preference on mount
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   const toggle = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
