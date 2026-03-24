@@ -23,6 +23,7 @@ export default function AnalyzePage() {
   const { status, start } = useStreamAnalysis();
   const [showForm, setShowForm] = useState(!currentAnalysis);
   const [jobPosting, setJobPosting] = useState('');
+  const [language, setLanguage] = useState('auto');
   const [shareCopied, setShareCopied] = useState(false);
 
   const handleShare = async () => {
@@ -37,8 +38,14 @@ export default function AnalyzePage() {
 
   const handleSubmit = async (values: AnalysisFormValues) => {
     setJobPosting(values.jobPosting);
+    setLanguage(values.language ?? 'auto');
     setShowForm(false);
-    await start(resumeText, values.jobPosting, values.company ?? 'Unknown Company');
+    await start(
+      resumeText,
+      values.jobPosting,
+      values.company ?? 'Unknown Company',
+      values.language ?? 'auto',
+    );
   };
 
   if (isLoading) {
@@ -91,11 +98,13 @@ export default function AnalyzePage() {
                 resumeText={resumeText}
                 jobPosting={jobPosting}
                 analysis={currentAnalysis}
+                language={language}
               />
               <FollowUpEmailPanel
                 resumeText={resumeText}
                 jobPosting={jobPosting}
                 analysis={currentAnalysis}
+                language={language}
               />
             </div>
           </>

@@ -127,12 +127,17 @@ export function useStreamAnalysis() {
   const { status, connect, abort } = useSSE(handleEvent);
 
   const start = useCallback(
-    async (resumeText: string, jobPosting: string, company = 'Unknown Company') => {
+    async (
+      resumeText: string,
+      jobPosting: string,
+      company = 'Unknown Company',
+      language = 'auto',
+    ) => {
       accRef.current = {};
       companyRef.current = company;
       setPartial({});
       setStreamingStatus('connecting');
-      await connect(ANALYZE_URL, { resumeText, jobPosting });
+      await connect(ANALYZE_URL, { resumeText, jobPosting, language });
     },
     [connect, setStreamingStatus],
   );

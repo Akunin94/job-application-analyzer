@@ -25,6 +25,7 @@ export async function streamAnalysis(
   res: Response,
   resumeText: string,
   jobPosting: string,
+  language = 'auto',
 ): Promise<void> {
   setSSEHeaders(res);
 
@@ -34,7 +35,7 @@ export async function streamAnalysis(
     const stream = anthropic.messages.stream({
       model: MODEL,
       max_tokens: 4096,
-      messages: [{ role: 'user', content: buildAnalyzePrompt(resumeText, jobPosting) }],
+      messages: [{ role: 'user', content: buildAnalyzePrompt(resumeText, jobPosting, language) }],
     });
 
     for await (const chunk of stream) {
@@ -72,6 +73,7 @@ export async function streamCoverLetter(
   resumeText: string,
   jobPosting: string,
   analysis: AnalysisResult,
+  language = 'auto',
 ): Promise<void> {
   setSSEHeaders(res);
 
@@ -82,7 +84,7 @@ export async function streamCoverLetter(
       messages: [
         {
           role: 'user',
-          content: buildCoverLetterPrompt(resumeText, jobPosting, analysis),
+          content: buildCoverLetterPrompt(resumeText, jobPosting, analysis, language),
         },
       ],
     });
@@ -115,6 +117,7 @@ export async function streamFollowUpEmail(
   interviewerName: string,
   interviewDate: string,
   keyPoints: string,
+  language = 'auto',
 ): Promise<void> {
   setSSEHeaders(res);
 
@@ -132,6 +135,7 @@ export async function streamFollowUpEmail(
             interviewerName,
             interviewDate,
             keyPoints,
+            language,
           ),
         },
       ],

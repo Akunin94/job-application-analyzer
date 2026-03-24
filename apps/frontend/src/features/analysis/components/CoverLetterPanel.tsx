@@ -13,6 +13,7 @@ interface CoverLetterPanelProps {
   resumeText: string;
   jobPosting: string;
   analysis: AnalysisResult;
+  language?: string;
 }
 
 async function downloadDocx(text: string) {
@@ -46,7 +47,12 @@ async function downloadDocx(text: string) {
   URL.revokeObjectURL(url);
 }
 
-export function CoverLetterPanel({ resumeText, jobPosting, analysis }: CoverLetterPanelProps) {
+export function CoverLetterPanel({
+  resumeText,
+  jobPosting,
+  analysis,
+  language = 'auto',
+}: CoverLetterPanelProps) {
   const [text, setText] = useState('');
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -66,7 +72,7 @@ export function CoverLetterPanel({ resumeText, jobPosting, analysis }: CoverLett
     setText('');
     setCopied(false);
     setIsEditing(false);
-    connect(COVER_LETTER_URL, { resumeText, jobPosting, analysis });
+    connect(COVER_LETTER_URL, { resumeText, jobPosting, analysis, language });
   };
 
   const copyToClipboard = async () => {

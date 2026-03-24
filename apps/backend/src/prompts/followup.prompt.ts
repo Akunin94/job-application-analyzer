@@ -7,10 +7,17 @@ export function buildFollowUpPrompt(
   interviewerName: string,
   interviewDate: string,
   keyPoints: string,
+  language = 'auto',
 ): string {
   const topStrengths = analysis.strengths.slice(0, 3).join(', ');
+  const langInstruction =
+    language === 'auto'
+      ? 'Detect the dominant language of the job posting and write the email in that language.'
+      : `Write the email in ${language}.`;
 
   return `Write a brief, professional post-interview follow-up email.
+
+Language: ${langInstruction}
 
 Context:
 - Interviewer: ${interviewerName || 'the interviewer'}

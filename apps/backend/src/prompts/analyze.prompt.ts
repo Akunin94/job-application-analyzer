@@ -1,5 +1,16 @@
-export function buildAnalyzePrompt(resumeText: string, jobPosting: string): string {
+export function buildAnalyzePrompt(
+  resumeText: string,
+  jobPosting: string,
+  language = 'auto',
+): string {
+  const langInstruction =
+    language === 'auto'
+      ? 'Detect the dominant language of the job posting and write ALL text fields in that language.'
+      : `Write ALL text fields in ${language}.`;
+
   return `You are an expert technical recruiter and career coach. Analyze the resume against the job posting below.
+
+Language: ${langInstruction}
 
 IMPORTANT: Return ONLY a valid JSON object — no markdown, no code fences, no preamble.
 

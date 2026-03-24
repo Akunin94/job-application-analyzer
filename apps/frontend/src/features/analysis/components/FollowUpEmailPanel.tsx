@@ -15,9 +15,15 @@ interface FollowUpEmailPanelProps {
   resumeText: string;
   jobPosting: string;
   analysis: AnalysisResult;
+  language?: string;
 }
 
-export function FollowUpEmailPanel({ resumeText, jobPosting, analysis }: FollowUpEmailPanelProps) {
+export function FollowUpEmailPanel({
+  resumeText,
+  jobPosting,
+  analysis,
+  language = 'auto',
+}: FollowUpEmailPanelProps) {
   const [text, setText] = useState('');
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +52,7 @@ export function FollowUpEmailPanel({ resumeText, jobPosting, analysis }: FollowU
       interviewerName,
       interviewDate,
       keyPoints,
+      language,
     });
   };
 

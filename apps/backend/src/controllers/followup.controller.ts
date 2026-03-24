@@ -9,8 +9,15 @@ export async function generateFollowUpEmail(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { resumeText, jobPosting, analysis, interviewerName, interviewDate, keyPoints } =
-      req.body;
+    const {
+      resumeText,
+      jobPosting,
+      analysis,
+      interviewerName,
+      interviewDate,
+      keyPoints,
+      language,
+    } = req.body;
     await streamFollowUpEmail(
       res,
       resumeText,
@@ -19,6 +26,7 @@ export async function generateFollowUpEmail(
       interviewerName,
       interviewDate,
       keyPoints,
+      language,
     );
   } catch (err) {
     next(err);

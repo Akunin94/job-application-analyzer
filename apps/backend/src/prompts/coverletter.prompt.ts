@@ -4,11 +4,18 @@ export function buildCoverLetterPrompt(
   resumeText: string,
   jobPosting: string,
   analysis: AnalysisResult,
+  language = 'auto',
 ): string {
   const topStrengths = analysis.strengths.slice(0, 3).join(', ');
   const matchedKeywords = analysis.keywords.matched.slice(0, 8).join(', ');
+  const langInstruction =
+    language === 'auto'
+      ? 'Detect the dominant language of the job posting and write the cover letter in that language.'
+      : `Write the cover letter in ${language}.`;
 
   return `Write a tailored cover letter based on the resume and job posting below.
+
+Language: ${langInstruction}
 
 Requirements:
 - 3 paragraphs, approximately 250 words total

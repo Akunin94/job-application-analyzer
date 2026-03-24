@@ -9,8 +9,8 @@ export async function analyzeResume(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { resumeText, jobPosting } = req.body;
-    await streamAnalysis(res, resumeText, jobPosting);
+    const { resumeText, jobPosting, language } = req.body;
+    await streamAnalysis(res, resumeText, jobPosting, language);
   } catch (err) {
     next(err);
   }

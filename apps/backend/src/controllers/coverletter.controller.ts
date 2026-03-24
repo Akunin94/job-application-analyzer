@@ -9,8 +9,8 @@ export async function generateCoverLetter(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { resumeText, jobPosting, analysis } = req.body;
-    await streamCoverLetter(res, resumeText, jobPosting, analysis);
+    const { resumeText, jobPosting, analysis, language } = req.body;
+    await streamCoverLetter(res, resumeText, jobPosting, analysis, language);
   } catch (err) {
     next(err);
   }

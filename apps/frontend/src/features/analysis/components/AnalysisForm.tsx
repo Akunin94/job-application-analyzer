@@ -4,10 +4,30 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { ResumeUploader } from '../../resume/components/ResumeUploader';
 import { useResumeStore } from '../../resume/hooks/useResumeStore';
 import { AnalysisFormValues, analysisFormSchema } from '../schemas/analysis.schema';
+
+const LANGUAGES = [
+  { value: 'auto', label: 'Auto-detect' },
+  { value: 'English', label: 'English' },
+  { value: 'Russian', label: 'Russian' },
+  { value: 'German', label: 'German' },
+  { value: 'French', label: 'French' },
+  { value: 'Spanish', label: 'Spanish' },
+  { value: 'Portuguese', label: 'Portuguese' },
+  { value: 'Chinese', label: 'Chinese' },
+  { value: 'Japanese', label: 'Japanese' },
+  { value: 'Korean', label: 'Korean' },
+];
 
 interface AnalysisFormProps {
   onSubmit: (values: AnalysisFormValues) => void;
@@ -20,10 +40,15 @@ export function AnalysisForm({ onSubmit, isLoading }: AnalysisFormProps) {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<AnalysisFormValues>({
     resolver: zodResolver(analysisFormSchema),
+    defaultValues: { language: 'auto' },
   });
+
+  const language = watch('language');
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -40,6 +65,22 @@ export function AnalysisForm({ onSubmit, isLoading }: AnalysisFormProps) {
           disabled={isLoading}
           {...register('company')}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Output Language</Label>
+        <Select value={language} onValueChange={(val: string) => setValue('language', val)}>
+          <SelectTrigger className="h-9 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {LANGUAGES.map(l => (
+              <SelectItem key={l.value} value={l.value}>
+                {l.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">

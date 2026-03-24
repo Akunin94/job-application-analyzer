@@ -117,4 +117,4 @@
 - [ ] **Telegram bot** — send job posting, get analysis back
 - [ ] **Notion/Airtable webhook** — track applications in external tools
 - [x] **Public share link** — share analysis results via URL
-- [ ] **Multi-language** — support resumes and job postings in non-English
+- [x] **Multi-language** — support resumes and job postings in non-English
