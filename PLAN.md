@@ -94,7 +94,7 @@
 
 - [ ] **Batch analysis** — upload multiple job postings, rank them by match score
 - [x] **Resume suggestions** — AI gives specific resume edits per job posting
-- [ ] **Job URL parser** — paste LinkedIn/HH/Indeed URL, scrape job text automatically
+- [x] **Job URL parser** — paste LinkedIn job URL, scrapes title + company + description automatically
 - [x] **Cover letter editor** — edit generated letter in UI, export as .docx
 - [x] **Red flags drill-down** — explain each red flag with source quote from job posting
 - [ ] **Auth (Clerk/Auth.js)** — persist history in DB instead of localStorage

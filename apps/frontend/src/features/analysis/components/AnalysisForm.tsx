@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Link, Loader2, Sparkles, X } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -14,6 +15,7 @@ import {
 import { Textarea } from '@/shared/components/ui/textarea';
 import { ResumeUploader } from '../../resume/components/ResumeUploader';
 import { useResumeStore } from '../../resume/hooks/useResumeStore';
+import { fetchJobFromUrl } from '../api/analyze';
 import { AnalysisFormValues, analysisFormSchema } from '../schemas/analysis.schema';
 
 const LANGUAGES = [
@@ -29,6 +31,8 @@ const LANGUAGES = [
   { value: 'Korean', label: 'Korean' },
 ];
 
+const LINKEDIN_RE = /linkedin\.com\/jobs\/(view|search)\//i;
+
 interface AnalysisFormProps {
   onSubmit: (values: AnalysisFormValues) => void;
   isLoading: boolean;
@@ -43,6 +47,9 @@ export function AnalysisForm({
   defaultCompany,
 }: AnalysisFormProps) {
   const { hasResume } = useResumeStore();
+  const [urlInput, setUrlInput] = useState('');
+  const [urlLoading, setUrlLoading] = useState(false);
+  const [urlError, setUrlError] = useState('');
 
   const {
     register,
@@ -61,11 +68,92 @@ export function AnalysisForm({
 
   const language = watch('language');
 
+  const handleUrlFetch = async () => {
+    if (!urlInput.trim()) return;
+    setUrlError('');
+    setUrlLoading(true);
+    try {
+      const data = await fetchJobFromUrl(urlInput.trim());
+      setValue('jobPosting', data.jobPosting, { shouldValidate: true });
+      if (data.company && !watch('company')) {
+        setValue('company', data.company);
+      }
+      setUrlInput('');
+    } catch (err) {
+      setUrlError(err instanceof Error ? err.message : 'Failed to fetch job posting.');
+    } finally {
+      setUrlLoading(false);
+    }
+  };
+
+  const handleUrlKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      void handleUrlFetch();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label>Resume</Label>
         <ResumeUploader />
+      </div>
+
+      {/* LinkedIn URL auto-fill */}
+      <div className="space-y-2">
+        <Label htmlFor="jobUrl">
+          LinkedIn Job URL{' '}
+          <span className="ml-1 text-xs font-normal text-muted-foreground">
+            optional — auto-fills the form
+          </span>
+        </Label>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Link
+              size={13}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              id="jobUrl"
+              value={urlInput}
+              onChange={e => {
+                setUrlInput(e.target.value);
+                setUrlError('');
+              }}
+              onKeyDown={handleUrlKeyDown}
+              placeholder="https://www.linkedin.com/jobs/view/…"
+              className="pl-8 text-sm"
+              disabled={isLoading || urlLoading}
+            />
+            {urlInput && (
+              <button
+                type="button"
+                onClick={() => {
+                  setUrlInput('');
+                  setUrlError('');
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X size={13} />
+              </button>
+            )}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="shrink-0"
+            disabled={!urlInput.trim() || !LINKEDIN_RE.test(urlInput) || isLoading || urlLoading}
+            onClick={handleUrlFetch}
+          >
+            {urlLoading ? <Loader2 size={13} className="animate-spin" /> : 'Import'}
+          </Button>
+        </div>
+        {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+        {!urlError && urlInput && !LINKEDIN_RE.test(urlInput) && (
+          <p className="text-xs text-muted-foreground">Paste a linkedin.com/jobs/view/… URL</p>
+        )}
       </div>
 
       <div className="space-y-2">
