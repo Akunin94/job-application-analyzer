@@ -20,3 +20,11 @@ export function buildShareUrl(result: AnalysisResult): string {
   const base = window.location.origin;
   return `${base}/share?d=${encoded}`;
 }
+
+export function decodeJobPosting(encoded: string): string | null {
+  try {
+    return decompressFromEncodedURIComponent(encoded) || null;
+  } catch {
+    return null;
+  }
+}

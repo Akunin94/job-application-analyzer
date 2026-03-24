@@ -1,5 +1,6 @@
 import { ArrowLeft, Check, Link } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useStore } from '@/app/store';
 import { AnalysisForm } from '@/features/analysis/components/AnalysisForm';
 import {
@@ -15,13 +16,21 @@ import { useResumeStore } from '@/features/resume/hooks/useResumeStore';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Separator } from '@/shared/components/ui/separator';
-import { buildShareUrl } from '@/shared/lib/share';
+import { buildShareUrl, decodeJobPosting } from '@/shared/lib/share';
 
 export default function AnalyzePage() {
   const { resumeText } = useResumeStore();
   const currentAnalysis = useStore(s => s.currentAnalysis);
   const { status, start } = useStreamAnalysis();
   const [showForm, setShowForm] = useState(!currentAnalysis);
+  const [searchParams] = useSearchParams();
+
+  // Pre-fill from browser extension (?job=<lz-compressed>&company=<name>)
+  const prefillJob = useMemo(() => {
+    const encoded = searchParams.get('job');
+    return encoded ? (decodeJobPosting(encoded) ?? '') : '';
+  }, [searchParams]);
+  const prefillCompany = searchParams.get('company') ?? '';
   const [jobPosting, setJobPosting] = useState('');
   const [language, setLanguage] = useState('auto');
   const [shareCopied, setShareCopied] = useState(false);
@@ -122,7 +131,12 @@ export default function AnalyzePage() {
         </p>
       </div>
       <Card className="p-6">
-        <AnalysisForm onSubmit={handleSubmit} isLoading={isLoading} />
+        <AnalysisForm
+          onSubmit={handleSubmit}
+          isLoading={isLoading}
+          defaultJobPosting={prefillJob}
+          defaultCompany={prefillCompany}
+        />
       </Card>
     </div>
   );

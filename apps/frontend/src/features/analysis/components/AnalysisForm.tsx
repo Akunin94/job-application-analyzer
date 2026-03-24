@@ -32,9 +32,16 @@ const LANGUAGES = [
 interface AnalysisFormProps {
   onSubmit: (values: AnalysisFormValues) => void;
   isLoading: boolean;
+  defaultJobPosting?: string;
+  defaultCompany?: string;
 }
 
-export function AnalysisForm({ onSubmit, isLoading }: AnalysisFormProps) {
+export function AnalysisForm({
+  onSubmit,
+  isLoading,
+  defaultJobPosting,
+  defaultCompany,
+}: AnalysisFormProps) {
   const { hasResume } = useResumeStore();
 
   const {
@@ -45,7 +52,11 @@ export function AnalysisForm({ onSubmit, isLoading }: AnalysisFormProps) {
     formState: { errors },
   } = useForm<AnalysisFormValues>({
     resolver: zodResolver(analysisFormSchema),
-    defaultValues: { language: 'auto' },
+    defaultValues: {
+      language: 'auto',
+      jobPosting: defaultJobPosting ?? '',
+      company: defaultCompany ?? '',
+    },
   });
 
   const language = watch('language');

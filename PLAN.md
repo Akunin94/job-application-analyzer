@@ -113,7 +113,7 @@
 
 ### Nice-to-have
 
-- [ ] **Browser extension** — analyze job posting directly on HH/LinkedIn page
+- [x] **Browser extension** — analyze job posting directly on LinkedIn page (Chrome MV3)
 - [ ] **Telegram bot** — send job posting, get analysis back
 - [ ] **Notion/Airtable webhook** — track applications in external tools
 - [x] **Public share link** — share analysis results via URL
