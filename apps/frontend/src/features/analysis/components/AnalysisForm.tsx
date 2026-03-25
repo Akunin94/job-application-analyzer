@@ -150,7 +150,20 @@ export function AnalysisForm({
             {urlLoading ? <Loader2 size={13} className="animate-spin" /> : 'Import'}
           </Button>
         </div>
-        {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+        {urlError && (
+          <div className="space-y-1">
+            <p className="text-xs text-destructive">{urlError}</p>
+            {urlError.toLowerCase().includes('login') && (
+              <p className="text-xs text-muted-foreground">
+                Open the job posting in your browser, select all text{' '}
+                <kbd className="rounded border border-border px-1 py-0.5 font-mono text-[10px]">
+                  Cmd+A
+                </kbd>{' '}
+                and paste it into the field below.
+              </p>
+            )}
+          </div>
+        )}
         {!urlError && urlInput && !LINKEDIN_RE.test(urlInput) && (
           <p className="text-xs text-muted-foreground">Paste a linkedin.com/jobs/view/… URL</p>
         )}

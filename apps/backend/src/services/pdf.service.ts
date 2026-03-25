@@ -1,14 +1,11 @@
-import { createRequire } from 'module';
+import { PDFParse } from 'pdf-parse';
 import { AppError } from '../middleware/error.middleware.js';
-
-const require = createRequire(import.meta.url);
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require('pdf-parse') as (buffer: Buffer) => Promise<{ text: string }>;
 
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
   try {
-    const data = await pdfParse(buffer);
-    const text = data.text.trim();
+    const parser = new PDFParse({ data: buffer });
+    const result = await parser.getText();
+    const text = result.text.trim();
 
     if (!text) {
       throw new AppError(422, 'PDF appears to be empty or contains no extractable text');
@@ -17,6 +14,7 @@ export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
     return text;
   } catch (err) {
     if (err instanceof AppError) throw err;
+    console.error('pdf-parse error:', err);
     throw new AppError(422, 'Failed to parse PDF file');
   }
 }

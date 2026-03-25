@@ -100,12 +100,14 @@ export const analysisResultSchema = z.object({
 export const analyzeRequestSchema = z.object({
   resumeText: z.string().min(1, 'Resume text is required'),
   jobPosting: z.string().min(1, 'Job posting is required'),
+  language: z.string().default('auto'),
 });
 
 export const coverLetterRequestSchema = z.object({
   resumeText: z.string().min(1, 'Resume text is required'),
   jobPosting: z.string().min(1, 'Job posting is required'),
   analysis: analysisResultSchema,
+  language: z.string().default('auto'),
 });
 
 export const followUpRequestSchema = z.object({
@@ -115,6 +117,7 @@ export const followUpRequestSchema = z.object({
   interviewerName: z.string().default(''),
   interviewDate: z.string().default(''),
   keyPoints: z.string().default(''),
+  language: z.string().default('auto'),
 });
 
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;

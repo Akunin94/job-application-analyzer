@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { AppError } from '../middleware/error.middleware.js';
 import { ParseUrlRequest } from '../schemas/url.schema.js';
 import { parseLinkedInJobUrl } from '../services/url.service.js';
 
@@ -13,6 +14,8 @@ export async function parseJobUrl(
     const result = await parseLinkedInJobUrl(url);
     res.json(result);
   } catch (err) {
-    next(err);
+    if (err instanceof AppError) return next(err);
+    const message = err instanceof Error ? err.message : 'Failed to parse job URL';
+    next(new AppError(422, message));
   }
 }
