@@ -87,6 +87,11 @@ export interface HistoryEntry {
   result: AnalysisResult;
 }
 
+export interface WebhookConfig {
+  notion: { integrationToken: string; databaseId: string };
+  airtable: { apiKey: string; baseId: string; tableName: string };
+}
+
 interface AppStore {
   // resume slice
   resumeText: string;
@@ -105,6 +110,10 @@ interface AppStore {
   addToHistory: (entry: HistoryEntry) => void;
   removeFromHistory: (id: string) => void;
   clearHistory: () => void;
+
+  // webhook config slice (persisted)
+  webhookConfig: WebhookConfig;
+  setWebhookConfig: (config: Partial<WebhookConfig>) => void;
 }
 
 export const useStore = create<AppStore>()(
@@ -179,10 +188,24 @@ export const useStore = create<AppStore>()(
             false,
             'clearHistory',
           ),
+
+        // webhook config
+        webhookConfig: {
+          notion: { integrationToken: '', databaseId: '' },
+          airtable: { apiKey: '', baseId: '', tableName: '' },
+        },
+        setWebhookConfig: config =>
+          set(
+            produce((s: AppStore) => {
+              Object.assign(s.webhookConfig, config);
+            }),
+            false,
+            'setWebhookConfig',
+          ),
       }),
       {
         name: 'ai-job-analyzer',
-        partialize: state => ({ history: state.history }),
+        partialize: state => ({ history: state.history, webhookConfig: state.webhookConfig }),
       },
     ),
     { name: 'AppStore' },

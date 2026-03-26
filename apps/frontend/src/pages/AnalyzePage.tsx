@@ -16,6 +16,7 @@ import { useResumeStore } from '@/features/resume/hooks/useResumeStore';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Separator } from '@/shared/components/ui/separator';
+import { WebhookExportButton } from '@/features/analysis/components/WebhookExportButton';
 import { buildShareUrl, decodeJobPosting } from '@/shared/lib/share';
 
 export default function AnalyzePage() {
@@ -33,6 +34,7 @@ export default function AnalyzePage() {
   const prefillCompany = searchParams.get('company') ?? '';
   const [jobPosting, setJobPosting] = useState('');
   const [language, setLanguage] = useState('auto');
+  const [company, setCompany] = useState('');
   const [shareCopied, setShareCopied] = useState(false);
 
   const handleShare = async () => {
@@ -48,6 +50,7 @@ export default function AnalyzePage() {
   const handleSubmit = async (values: AnalysisFormValues) => {
     setJobPosting(values.jobPosting);
     setLanguage(values.language ?? 'auto');
+    setCompany(values.company ?? '');
     setShowForm(false);
     await start(
       resumeText,
@@ -78,6 +81,7 @@ export default function AnalyzePage() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-foreground">Analysis Results</h1>
           <div className="flex items-center gap-2">
+            <WebhookExportButton analysis={currentAnalysis} company={company} />
             <Button
               variant="ghost"
               size="sm"
