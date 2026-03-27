@@ -59,10 +59,8 @@ async function sendToAirtable(
 }
 
 export function WebhookExportButton({ analysis, company }: WebhookExportButtonProps) {
-  const { webhookConfig, setWebhookConfig } = useStore(s => ({
-    webhookConfig: s.webhookConfig,
-    setWebhookConfig: s.setWebhookConfig,
-  }));
+  const webhookConfig = useStore(s => s.webhookConfig);
+  const setWebhookConfig = useStore(s => s.setWebhookConfig);
 
   const [open, setOpen] = useState(false);
   const [notionState, setNotionState] = useState<SendState>('idle');
