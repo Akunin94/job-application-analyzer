@@ -98,7 +98,7 @@
 - [x] **Cover letter editor** — edit generated letter in UI, export as .docx
 - [x] **Red flags drill-down** — explain each red flag with source quote from job posting
 - [ ] **Auth (Clerk/Auth.js)** — persist history in DB instead of localStorage
-- [ ] **PDF export** — download full analysis report as PDF
+- [x] **PDF export** — download full analysis report as PDF
 - [ ] **Resume versioning** — store multiple resume versions, pick one per analysis
 
 ### Medium Priority

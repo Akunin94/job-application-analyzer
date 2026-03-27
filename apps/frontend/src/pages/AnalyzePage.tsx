@@ -1,5 +1,5 @@
-import { ArrowLeft, Check, Link } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { ArrowLeft, Check, Download, Link } from 'lucide-react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useStore } from '@/app/store';
 import { AnalysisForm } from '@/features/analysis/components/AnalysisForm';
@@ -17,7 +17,12 @@ import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Separator } from '@/shared/components/ui/separator';
 import { WebhookExportButton } from '@/features/analysis/components/WebhookExportButton';
+import { AnalysisPdfDocument } from '@/features/analysis/components/AnalysisPdfDocument';
 import { buildShareUrl, decodeJobPosting } from '@/shared/lib/share';
+
+const PDFDownloadLink = lazy(() =>
+  import('@react-pdf/renderer').then(m => ({ default: m.PDFDownloadLink })),
+);
 
 export default function AnalyzePage() {
   const { resumeText } = useResumeStore();
@@ -81,6 +86,24 @@ export default function AnalyzePage() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-foreground">Analysis Results</h1>
           <div className="flex items-center gap-2">
+            <Suspense fallback={null}>
+              <PDFDownloadLink
+                document={<AnalysisPdfDocument result={currentAnalysis} company={company} />}
+                fileName={`analysis-${company.replace(/\s+/g, '-').toLowerCase() || 'report'}.pdf`}
+              >
+                {({ loading }) => (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5 text-xs text-muted-foreground"
+                    disabled={loading}
+                  >
+                    <Download size={13} />
+                    {loading ? 'Preparing…' : 'PDF'}
+                  </Button>
+                )}
+              </PDFDownloadLink>
+            </Suspense>
             <WebhookExportButton analysis={currentAnalysis} company={company} />
             <Button
               variant="ghost"
