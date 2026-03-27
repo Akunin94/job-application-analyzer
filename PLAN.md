@@ -114,7 +114,7 @@
 ### Nice-to-have
 
 - [x] **Browser extension** — analyze job posting directly on LinkedIn page (Chrome MV3)
-- [ ] **Telegram bot** — send job posting, get analysis back
+- [x] **Telegram bot** — send job posting, get analysis back
 - [x] **Notion/Airtable webhook** — track applications in external tools
 - [x] **Public share link** — share analysis results via URL
 - [x] **Multi-language** — support resumes and job postings in non-English

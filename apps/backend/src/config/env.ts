@@ -5,4 +5,5 @@ export const env = cleanEnv(process.env, {
   PORT: port({ default: 3001 }),
   FRONTEND_URL: url({ default: 'http://localhost:5173' }),
   ANTHROPIC_API_KEY: str(),
+  TELEGRAM_BOT_TOKEN: str({ default: '' }),
 });
