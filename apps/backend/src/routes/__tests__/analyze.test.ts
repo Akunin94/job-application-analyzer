@@ -88,6 +88,11 @@ describe('POST /api/analyze/cover-letter', () => {
             confidence: 'medium',
             notes: 'Market rate',
           },
+          atsScore: null,
+          skillsRoadmap: null,
+          interviewPrep: null,
+          resumeSuggestions: null,
+          companyResearch: null,
         },
       });
 
