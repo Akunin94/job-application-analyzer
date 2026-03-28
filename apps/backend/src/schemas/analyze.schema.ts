@@ -120,6 +120,13 @@ export const followUpRequestSchema = z.object({
   language: z.string().default('auto'),
 });
 
+export const enhanceResumeRequestSchema = z.object({
+  resumeText: z.string().min(1, 'Resume text is required'),
+  jobPosting: z.string().min(1, 'Job posting is required'),
+  improvements: z.array(z.string().min(1)).min(1, 'Select at least one improvement'),
+});
+
+export type EnhanceResumeRequest = z.infer<typeof enhanceResumeRequestSchema>;
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 export type CoverLetterRequest = z.infer<typeof coverLetterRequestSchema>;
 export type FollowUpRequest = z.infer<typeof followUpRequestSchema>;

@@ -16,6 +16,7 @@ import { useResumeStore } from '@/features/resume/hooks/useResumeStore';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Separator } from '@/shared/components/ui/separator';
+import { EnhanceResumePanel } from '@/features/analysis/components/EnhanceResumePanel';
 import { WebhookExportButton } from '@/features/analysis/components/WebhookExportButton';
 import { AnalysisPdfDocument } from '@/features/analysis/components/AnalysisPdfDocument';
 import { buildShareUrl, decodeJobPosting } from '@/shared/lib/share';
@@ -130,6 +131,11 @@ export default function AnalyzePage() {
           <>
             <Separator className="my-6" />
             <div className="space-y-4">
+              <EnhanceResumePanel
+                result={currentAnalysis}
+                resumeText={resumeText}
+                jobPosting={jobPosting}
+              />
               <CoverLetterPanel
                 resumeText={resumeText}
                 jobPosting={jobPosting}
