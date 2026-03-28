@@ -4,7 +4,11 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import'],
   extends: ['airbnb-typescript/base', 'plugin:@typescript-eslint/recommended', 'prettier'],
   parserOptions: {
-    project: ['./packages/*/tsconfig.json', './apps/backend/tsconfig.json'],
+    project: [
+      './packages/*/tsconfig.json',
+      './apps/backend/tsconfig.json',
+      './apps/cli/tsconfig.json',
+    ],
     tsconfigRootDir: __dirname,
   },
   settings: {
