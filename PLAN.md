@@ -92,6 +92,7 @@
 
 ### High Priority
 
+- [x] **Rate limiting** — `express-rate-limit`: 120 req/15 min (API), 10 req/15 min (AI endpoints)
 - [ ] **Batch analysis** — upload multiple job postings, rank them by match score
 - [x] **Resume suggestions** — AI gives specific resume edits per job posting
 - [x] **Job URL parser** — paste LinkedIn job URL, scrapes title + company + description automatically
@@ -103,6 +104,9 @@
 
 ### Medium Priority
 
+- [ ] **Redis cache** — cache analysis results by `sha256(resume+job)` for 24h, avoid duplicate Claude calls
+- [ ] **Structured logging** — `pino` + Sentry error tracking
+- [ ] **OpenAPI / Swagger** — auto-generated API docs
 - [x] **Salary estimation** — AI estimates salary range from job posting + market data
 - [x] **Skills roadmap** — learning plan for closing skill gaps with resources/links
 - [x] **ATS score** — estimate whether resume passes automated keyword filters
