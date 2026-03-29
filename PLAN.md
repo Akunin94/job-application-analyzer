@@ -105,7 +105,7 @@
 ### Medium Priority
 
 - [ ] **Redis cache** — cache analysis results by `sha256(resume+job)` for 24h, avoid duplicate Claude calls
-- [ ] **Structured logging** — `pino` + Sentry error tracking
+- [x] **Sentry error tracking** — `@sentry/node` (backend) + `@sentry/react` (frontend, ErrorBoundary); activated via `SENTRY_DSN` / `VITE_SENTRY_DSN` env vars
 - [ ] **OpenAPI / Swagger** — auto-generated API docs
 - [x] **Salary estimation** — AI estimates salary range from job posting + market data
 - [x] **Skills roadmap** — learning plan for closing skill gaps with resources/links
