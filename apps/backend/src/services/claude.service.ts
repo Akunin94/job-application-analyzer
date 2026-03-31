@@ -6,6 +6,7 @@ import { buildAnalyzePrompt } from '../prompts/analyze.prompt.js';
 import { buildCoverLetterPrompt } from '../prompts/coverletter.prompt.js';
 import { buildFollowUpPrompt } from '../prompts/followup.prompt.js';
 import { AnalysisResult, analysisResultSchema } from '../schemas/analyze.schema.js';
+import { cacheKey, getCachedAnalysis, setCachedAnalysis } from './cache.service.js';
 
 const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
 
@@ -21,6 +22,22 @@ function sendEvent(res: Response, type: string, data: unknown): void {
   res.write(`event: ${type}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
+function flushResult(res: Response, parsed: AnalysisResult): void {
+  sendEvent(res, 'match_score', { score: parsed.matchScore, confidence: parsed.confidence });
+  sendEvent(res, 'category_scores', parsed.categoryScores);
+  sendEvent(res, 'strengths', parsed.strengths);
+  sendEvent(res, 'gaps', parsed.skillGaps);
+  sendEvent(res, 'recommendations', parsed.recommendations);
+  sendEvent(res, 'red_flags', parsed.redFlags);
+  sendEvent(res, 'salary', parsed.salaryEstimate);
+  sendEvent(res, 'ats_score', parsed.atsScore);
+  sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
+  sendEvent(res, 'interview_prep', parsed.interviewPrep);
+  sendEvent(res, 'resume_suggestions', parsed.resumeSuggestions);
+  sendEvent(res, 'company_research', parsed.companyResearch);
+  sendEvent(res, 'done', null);
+}
+
 export async function streamAnalysis(
   res: Response,
   resumeText: string,
@@ -30,6 +47,15 @@ export async function streamAnalysis(
   setSSEHeaders(res);
 
   try {
+    const key = cacheKey(resumeText, jobPosting);
+    const cached = await getCachedAnalysis(key);
+
+    if (cached) {
+      res.setHeader('X-Cache', 'HIT');
+      flushResult(res, cached);
+      return;
+    }
+
     let accumulated = '';
 
     const stream = anthropic.messages.stream({
@@ -45,20 +71,8 @@ export async function streamAnalysis(
     }
 
     const parsed = analysisResultSchema.parse(JSON.parse(accumulated));
-
-    sendEvent(res, 'match_score', { score: parsed.matchScore, confidence: parsed.confidence });
-    sendEvent(res, 'category_scores', parsed.categoryScores);
-    sendEvent(res, 'strengths', parsed.strengths);
-    sendEvent(res, 'gaps', parsed.skillGaps);
-    sendEvent(res, 'recommendations', parsed.recommendations);
-    sendEvent(res, 'red_flags', parsed.redFlags);
-    sendEvent(res, 'salary', parsed.salaryEstimate);
-    sendEvent(res, 'ats_score', parsed.atsScore);
-    sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
-    sendEvent(res, 'interview_prep', parsed.interviewPrep);
-    sendEvent(res, 'resume_suggestions', parsed.resumeSuggestions);
-    sendEvent(res, 'company_research', parsed.companyResearch);
-    sendEvent(res, 'done', null);
+    void setCachedAnalysis(key, parsed);
+    flushResult(res, parsed);
   } catch (err) {
     sendEvent(res, 'error', {
       message: err instanceof Error ? err.message : 'Analysis failed',

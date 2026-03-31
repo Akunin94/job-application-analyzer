@@ -1,4 +1,10 @@
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+
   backend:
     build:
       context: ./apps/backend
@@ -10,9 +16,12 @@ services:
       - PORT=3001
       - FRONTEND_URL=http://localhost:5173
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - REDIS_URL=redis://redis:6379
     volumes:
       - ./apps/backend:/app
       - /app/node_modules
+    depends_on:
+      - redis
     restart: unless-stopped
 
   frontend:
