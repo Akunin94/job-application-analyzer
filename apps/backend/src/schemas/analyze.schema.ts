@@ -82,6 +82,28 @@ export const analyzeRequestSchema = z.object({
   language: z.string().default('auto'),
 });
 
+/**
+ * A batch is one HTTP request but N Claude calls, so the AI rate limiter — which
+ * counts requests — can't see its real cost. The cap is what keeps a single
+ * batch from spending a whole window's worth of budget.
+ */
+export const BATCH_MAX_JOBS = 10;
+
+const batchJobSchema = z.object({
+  id: z.string().min(1),
+  company: z.string().default(''),
+  jobPosting: z.string().min(1, 'Job posting is required'),
+});
+
+export const batchAnalyzeRequestSchema = z.object({
+  resumeText: z.string().min(1, 'Resume text is required'),
+  jobs: z
+    .array(batchJobSchema)
+    .min(1, 'Add at least one job posting')
+    .max(BATCH_MAX_JOBS, `A batch holds at most ${BATCH_MAX_JOBS} job postings`),
+  language: z.string().default('auto'),
+});
+
 export const generateRequestSchema = z.object({
   resumeText: z.string().min(1, 'Resume text is required'),
   jobPosting: z.string().min(1, 'Job posting is required'),
@@ -104,6 +126,8 @@ export const followUpRequestSchema = z.object({
 });
 
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
+export type BatchAnalyzeRequest = z.infer<typeof batchAnalyzeRequestSchema>;
+export type BatchJob = z.infer<typeof batchJobSchema>;
 export type GenerateRequest = z.infer<typeof generateRequestSchema>;
 export type GenerateTarget = (typeof GENERATE_TARGETS)[number];
 export type FollowUpRequest = z.infer<typeof followUpRequestSchema>;

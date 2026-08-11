@@ -93,7 +93,7 @@
 ### High Priority
 
 - [x] **Rate limiting** — `express-rate-limit`: 120 req/15 min (API), 10 req/15 min (AI endpoints)
-- [ ] **Batch analysis** — upload multiple job postings, rank them by match score
+- [x] **Batch analysis** — `POST /api/analyze/batch` runs one resume against up to 10 postings (3 at a time), streams each result as it lands and closes with a `ranking` event; `/batch` page shows the ranked table
 - [x] **Resume suggestions** — AI gives specific resume edits per job posting
 - [x] **Job URL parser** — paste LinkedIn job URL, scrapes title + company + description automatically
 - [x] **Cover letter editor** — edit generated letter in UI, export as .docx

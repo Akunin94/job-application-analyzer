@@ -31,6 +31,47 @@ function flushResult(res: Response, parsed: AnalysisResult): void {
   sendEvent(res, 'done', null);
 }
 
+/**
+ * One resume against one posting, with the cache in front of it. Split out of
+ * `streamAnalysis` so batch runs can reuse it — they need the result as a value,
+ * not written to a response.
+ */
+export async function runAnalysis(
+  resumeText: string,
+  jobPosting: string,
+  language = 'auto',
+): Promise<{ result: AnalysisResult; cached: boolean }> {
+  const key = cacheKey(resumeText, jobPosting);
+  const cached = await getCachedAnalysis(key);
+  if (cached) return { result: cached, cached: true };
+
+  let accumulated = '';
+
+  const stream = anthropic.messages.stream({
+    model: MODEL,
+    max_tokens: ANALYSIS_MAX_TOKENS,
+    thinking: { type: 'disabled' },
+    messages: [{ role: 'user', content: buildAnalyzePrompt(resumeText, jobPosting, language) }],
+  });
+
+  for await (const chunk of stream) {
+    if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+      accumulated += chunk.delta.text;
+    }
+  }
+
+  const final = await stream.finalMessage();
+  if (final.stop_reason === 'max_tokens') {
+    throw new Error(
+      'The analysis was cut off before it finished. Try a shorter job posting or resume.',
+    );
+  }
+
+  const result = analysisResultSchema.parse(extractJson(accumulated));
+  void setCachedAnalysis(key, result);
+  return { result, cached: false };
+}
+
 export async function streamAnalysis(
   res: Response,
   resumeText: string,
@@ -40,40 +81,9 @@ export async function streamAnalysis(
   setSSEHeaders(res);
 
   try {
-    const key = cacheKey(resumeText, jobPosting);
-    const cached = await getCachedAnalysis(key);
-
-    if (cached) {
-      res.setHeader('X-Cache', 'HIT');
-      flushResult(res, cached);
-      return;
-    }
-
-    let accumulated = '';
-
-    const stream = anthropic.messages.stream({
-      model: MODEL,
-      max_tokens: ANALYSIS_MAX_TOKENS,
-      thinking: { type: 'disabled' },
-      messages: [{ role: 'user', content: buildAnalyzePrompt(resumeText, jobPosting, language) }],
-    });
-
-    for await (const chunk of stream) {
-      if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-        accumulated += chunk.delta.text;
-      }
-    }
-
-    const final = await stream.finalMessage();
-    if (final.stop_reason === 'max_tokens') {
-      throw new Error(
-        'The analysis was cut off before it finished. Try a shorter job posting or resume.',
-      );
-    }
-
-    const parsed = analysisResultSchema.parse(extractJson(accumulated));
-    void setCachedAnalysis(key, parsed);
-    flushResult(res, parsed);
+    const { result, cached } = await runAnalysis(resumeText, jobPosting, language);
+    if (cached) res.setHeader('X-Cache', 'HIT');
+    flushResult(res, result);
   } catch (err) {
     sendEvent(res, 'error', {
       message: err instanceof Error ? err.message : 'Analysis failed',

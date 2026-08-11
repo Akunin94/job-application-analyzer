@@ -70,6 +70,10 @@ ai-job-analyzer/
 │   │       │   │   ├── hooks/        # useStreamAnalysis, useAnalysisHistory
 │   │       │   │   ├── schemas/      # Zod schemas
 │   │       │   │   └── api/          # API call functions
+│   │       │   ├── batch/            # many postings, one resume
+│   │       │   │   ├── components/   # BatchJobEditor, BatchResultTable
+│   │       │   │   ├── hooks/        # useBatchAnalysis
+│   │       │   │   └── api/          # BATCH_URL
 │   │       │   ├── generate/         # post-analysis artifacts
 │   │       │   │   ├── components/   # GeneratePanel, ResumePdf
 │   │       │   │   ├── hooks/        # useGenerate
@@ -263,6 +267,8 @@ Persist only `history` slice via `partialize`.
 ```
 POST   /api/upload/resume       # multipart/form-data, returns { text, fileName }
 POST   /api/analyze             # { resumeText, jobPosting } → SSE stream (score + gaps)
+POST   /api/analyze/batch       # { resumeText, jobs[], language } → SSE stream,
+                                #   one result per posting + a final `ranking` event
 POST   /api/analyze/generate    # { resumeText, jobPosting, analysis, targets[], instructions }
                                 #   → SSE stream, one section per requested target
 POST   /api/analyze/follow-up   # post-interview email → SSE stream

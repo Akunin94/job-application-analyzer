@@ -1,4 +1,4 @@
-import { BrainCircuit, Clock, GitCompare, Home } from 'lucide-react';
+import { BrainCircuit, Clock, GitCompare, Home, Layers } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { cn } from '@/shared/lib/cn';
 import { ThemeToggle } from './ThemeToggle';
@@ -6,6 +6,7 @@ import { ThemeToggle } from './ThemeToggle';
 const navItems = [
   { to: '/', label: 'Home', icon: Home, end: true },
   { to: '/analyze', label: 'Analyze', icon: BrainCircuit, end: false },
+  { to: '/batch', label: 'Batch', icon: Layers, end: false },
   { to: '/history', label: 'History', icon: Clock, end: false },
   { to: '/compare', label: 'Compare', icon: GitCompare, end: false },
 ];

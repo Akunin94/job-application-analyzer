@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
 import { app } from '../../app.js';
-import type { AnalysisResult } from '../../schemas/analyze.schema.js';
+import { BATCH_MAX_JOBS, type AnalysisResult } from '../../schemas/analyze.schema.js';
 
 vi.mock('../../services/claude.service.js', () => ({
   streamAnalysis: vi.fn(async (_res: import('express').Response) => {
@@ -12,6 +12,16 @@ vi.mock('../../services/claude.service.js', () => ({
   }),
   streamFollowUpEmail: vi.fn(async (_res: import('express').Response) => {
     _res.setHeader('Content-Type', 'text/event-stream');
+    _res.write('event: done\ndata: null\n\n');
+    _res.end();
+  }),
+}));
+
+vi.mock('../../services/batch.service.js', () => ({
+  streamBatchAnalysis: vi.fn(async (_res: import('express').Response) => {
+    _res.setHeader('Content-Type', 'text/event-stream');
+    _res.write('event: batch_start\ndata: {"total":2}\n\n');
+    _res.write('event: ranking\ndata: [{"id":"a","company":"Acme","matchScore":80}]\n\n');
     _res.write('event: done\ndata: null\n\n');
     _res.end();
   }),
@@ -76,6 +86,54 @@ describe('POST /api/analyze', () => {
     expect(res.status).toBe(200);
     expect(res.headers['content-type']).toContain('text/event-stream');
     expect(res.text).toContain('event: match_score');
+    expect(res.text).toContain('event: done');
+  });
+});
+
+describe('POST /api/analyze/batch', () => {
+  it('returns 400 when the jobs array is empty', async () => {
+    const res = await request(app)
+      .post('/api/analyze/batch')
+      .send({ resumeText: 'My resume', jobs: [] });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 when a job has no posting text', async () => {
+    const res = await request(app)
+      .post('/api/analyze/batch')
+      .send({ resumeText: 'My resume', jobs: [{ id: 'a', company: 'Acme', jobPosting: '' }] });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('rejects batches over the job cap', async () => {
+    const jobs = Array.from({ length: BATCH_MAX_JOBS + 1 }, (_, i) => ({
+      id: `job-${i}`,
+      company: `Company ${i}`,
+      jobPosting: 'We are looking for a developer',
+    }));
+
+    const res = await request(app).post('/api/analyze/batch').send({ resumeText: 'CV', jobs });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('streams a ranking for a valid batch', async () => {
+    const res = await request(app)
+      .post('/api/analyze/batch')
+      .send({
+        resumeText: 'My resume',
+        jobs: [
+          { id: 'a', company: 'Acme', jobPosting: 'Senior React developer' },
+          { id: 'b', company: 'Globex', jobPosting: 'Backend engineer' },
+        ],
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toContain('text/event-stream');
+    expect(res.text).toContain('event: batch_start');
+    expect(res.text).toContain('event: ranking');
     expect(res.text).toContain('event: done');
   });
 });
