@@ -20,7 +20,12 @@ import { cn } from '@/shared/lib/cn';
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
 import { useGenerate } from '../hooks/useGenerate';
 import { buildTextFile, downloadBlob, slugify } from '../lib/download';
-import { TARGET_LABELS, type GeneratedResume, type GenerateTarget } from '../types';
+import {
+  TARGET_LABELS,
+  type GeneratedResume,
+  type GenerateResults,
+  type GenerateTarget,
+} from '../types';
 // Deliberately a static import: PDFDownloadLink renders `document` inside
 // react-pdf's own reconciler, which knows nothing about React.lazy or Suspense.
 // A lazy element throws there, and the crash escapes to the router boundary —
@@ -54,7 +59,36 @@ const TARGETS: Array<{ id: GenerateTarget; label: string; hint: string }> = [
   },
 ];
 
-const LETTER_TARGETS = ['coverLetter', 'companyEmail', 'hrMessage'] as const;
+const LETTER_CARDS = [
+  { id: 'coverLetter', fileSuffix: 'cover-letter' },
+  { id: 'companyEmail', fileSuffix: 'email' },
+  { id: 'hrMessage', fileSuffix: 'recruiter-message' },
+] as const satisfies ReadonlyArray<{ id: GenerateTarget; fileSuffix: string }>;
+
+type LetterTarget = (typeof LETTER_CARDS)[number]['id'];
+
+/**
+ * companyEmail lands as {subject, body}; the other two are plain strings. Either
+ * may still be mid-stream, in which case the partial buffer is all there is.
+ * null means the letter was not requested — nothing to render for it.
+ */
+function letterContent(
+  id: LetterTarget,
+  results: GenerateResults,
+  streaming: Partial<Record<GenerateTarget, string>>,
+): { text: string; subject?: string } | null {
+  const partial = streaming[id];
+
+  if (id === 'companyEmail') {
+    const email = results.companyEmail;
+    if (email === undefined && partial === undefined) return null;
+    return { text: email?.body ?? partial ?? '', subject: email?.subject };
+  }
+
+  const done = results[id];
+  if (done === undefined && partial === undefined) return null;
+  return { text: done ?? partial ?? '' };
+}
 
 function useCopy() {
   const [copied, setCopied] = useState<string | null>(null);
@@ -364,7 +398,7 @@ export function GeneratePanel({ result, resumeText, jobPosting, company, languag
               </p>
             )}
 
-            {LETTER_TARGETS.some(t => streaming[t] !== undefined || results[t]) && (
+            {LETTER_CARDS.some(card => letterContent(card.id, results, streaming) !== null) && (
               <div className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
                 <span className="mr-1">Letters as:</span>
                 {(['text', 'file'] as const).map(mode => (
@@ -385,42 +419,24 @@ export function GeneratePanel({ result, resumeText, jobPosting, company, languag
               </div>
             )}
 
-            {(results.coverLetter !== undefined || streaming.coverLetter !== undefined) && (
-              <LetterCard
-                title={TARGET_LABELS.coverLetter}
-                text={results.coverLetter ?? streaming.coverLetter ?? ''}
-                fileName={`${baseName}-cover-letter`}
-                mode={letterMode}
-                isStreaming={active === 'coverLetter'}
-                copiedKey={copied}
-                onCopy={copy}
-              />
-            )}
+            {LETTER_CARDS.map(card => {
+              const content = letterContent(card.id, results, streaming);
+              if (content === null) return null;
 
-            {(results.companyEmail !== undefined || streaming.companyEmail !== undefined) && (
-              <LetterCard
-                title={TARGET_LABELS.companyEmail}
-                text={results.companyEmail?.body ?? streaming.companyEmail ?? ''}
-                subject={results.companyEmail?.subject}
-                fileName={`${baseName}-email`}
-                mode={letterMode}
-                isStreaming={active === 'companyEmail'}
-                copiedKey={copied}
-                onCopy={copy}
-              />
-            )}
-
-            {(results.hrMessage !== undefined || streaming.hrMessage !== undefined) && (
-              <LetterCard
-                title={TARGET_LABELS.hrMessage}
-                text={results.hrMessage ?? streaming.hrMessage ?? ''}
-                fileName={`${baseName}-recruiter-message`}
-                mode={letterMode}
-                isStreaming={active === 'hrMessage'}
-                copiedKey={copied}
-                onCopy={copy}
-              />
-            )}
+              return (
+                <LetterCard
+                  key={card.id}
+                  title={TARGET_LABELS[card.id]}
+                  text={content.text}
+                  subject={content.subject}
+                  fileName={`${baseName}-${card.fileSuffix}`}
+                  mode={letterMode}
+                  isStreaming={active === card.id}
+                  copiedKey={copied}
+                  onCopy={copy}
+                />
+              );
+            })}
           </div>
         )}
       </CardContent>
