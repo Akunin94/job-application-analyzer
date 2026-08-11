@@ -29,54 +29,11 @@ export interface AnalysisResult {
   }>;
   recommendations: string[];
   keywords: { matched: string[]; missing: string[] };
-  coverLetterOutline: string;
-  salaryEstimate: {
-    min: number;
-    max: number;
-    currency: string;
-    period: 'year' | 'month';
-    confidence: 'low' | 'medium' | 'high';
-    notes: string;
-  } | null;
   atsScore: {
     score: number;
     verdict: 'likely_pass' | 'borderline' | 'likely_reject';
     missingKeywords: string[];
     formattingTips: string[];
-  } | null;
-  skillsRoadmap: Array<{
-    skill: string;
-    priority: 'critical' | 'important' | 'nice-to-have';
-    timeEstimate: string;
-    resources: Array<{
-      title: string;
-      type: 'course' | 'docs' | 'book' | 'tutorial' | 'practice';
-    }>;
-  }> | null;
-  interviewPrep: Array<{
-    question: string;
-    category: 'technical' | 'behavioral' | 'situational' | 'culture-fit';
-    difficulty: 'easy' | 'medium' | 'hard';
-    tip: string;
-  }> | null;
-  resumeSuggestions: Array<{
-    section: string;
-    type: 'rewrite' | 'add' | 'remove' | 'strengthen';
-    current: string;
-    suggestion: string;
-    reason: string;
-  }> | null;
-  companyResearch: {
-    name: string;
-    overview: string;
-    industry: string;
-    size: string;
-    funding: string;
-    techStack: string[];
-    culture: string[];
-    interviewProcess: string;
-    confidence: 'low' | 'medium' | 'high';
-    disclaimer: string;
   } | null;
 }
 

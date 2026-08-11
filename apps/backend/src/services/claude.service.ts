@@ -3,8 +3,8 @@ import { Response } from 'express';
 
 import { env } from '../config/env.js';
 import { extractJson } from '../lib/extract-json.js';
+import { sendEvent, setSSEHeaders } from '../lib/sse.js';
 import { buildAnalyzePrompt } from '../prompts/analyze.prompt.js';
-import { buildCoverLetterPrompt } from '../prompts/coverletter.prompt.js';
 import { buildFollowUpPrompt } from '../prompts/followup.prompt.js';
 import { AnalysisResult, analysisResultSchema } from '../schemas/analyze.schema.js';
 import { cacheKey, getCachedAnalysis, setCachedAnalysis } from './cache.service.js';
@@ -13,34 +13,21 @@ const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
 
 const MODEL = 'claude-sonnet-5';
 
-// The analysis prompt asks for one large JSON object (interview prep, resume
-// suggestions, company research…) — measured at ~5.2k output tokens for a
-// typical posting. 4096 truncated it mid-string and JSON.parse blew up.
-const ANALYSIS_MAX_TOKENS = 16000;
-
-function setSSEHeaders(res: Response): void {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-}
-
-function sendEvent(res: Response, type: string, data: unknown): void {
-  res.write(`event: ${type}\ndata: ${JSON.stringify(data)}\n\n`);
-}
+// The trimmed analysis (score, gaps, keywords, red flags, ATS) is a fraction of
+// the old 16k-token payload. 4096 fits a full 12-entry gap list with headroom;
+// raise it only if `stop_reason: max_tokens` starts showing up.
+const ANALYSIS_MAX_TOKENS = 4096;
 
 function flushResult(res: Response, parsed: AnalysisResult): void {
   sendEvent(res, 'match_score', { score: parsed.matchScore, confidence: parsed.confidence });
+  sendEvent(res, 'summary', parsed.summary);
   sendEvent(res, 'category_scores', parsed.categoryScores);
   sendEvent(res, 'strengths', parsed.strengths);
   sendEvent(res, 'gaps', parsed.skillGaps);
   sendEvent(res, 'recommendations', parsed.recommendations);
+  sendEvent(res, 'keywords', parsed.keywords);
   sendEvent(res, 'red_flags', parsed.redFlags);
-  sendEvent(res, 'salary', parsed.salaryEstimate);
   sendEvent(res, 'ats_score', parsed.atsScore);
-  sendEvent(res, 'skills_roadmap', parsed.skillsRoadmap);
-  sendEvent(res, 'interview_prep', parsed.interviewPrep);
-  sendEvent(res, 'resume_suggestions', parsed.resumeSuggestions);
-  sendEvent(res, 'company_research', parsed.companyResearch);
   sendEvent(res, 'done', null);
 }
 
@@ -90,48 +77,6 @@ export async function streamAnalysis(
   } catch (err) {
     sendEvent(res, 'error', {
       message: err instanceof Error ? err.message : 'Analysis failed',
-    });
-  } finally {
-    res.end();
-  }
-}
-
-export async function streamCoverLetter(
-  res: Response,
-  resumeText: string,
-  jobPosting: string,
-  analysis: AnalysisResult,
-  language = 'auto',
-): Promise<void> {
-  setSSEHeaders(res);
-
-  try {
-    const stream = anthropic.messages.stream({
-      model: MODEL,
-      max_tokens: 1024,
-      thinking: { type: 'disabled' },
-      messages: [
-        {
-          role: 'user',
-          content: buildCoverLetterPrompt(resumeText, jobPosting, analysis, language),
-        },
-      ],
-    });
-
-    for await (const chunk of stream) {
-      if (
-        chunk.type === 'content_block_delta' &&
-        chunk.delta.type === 'text_delta' &&
-        chunk.delta.text
-      ) {
-        sendEvent(res, 'cover_letter', chunk.delta.text);
-      }
-    }
-
-    sendEvent(res, 'done', null);
-  } catch (err) {
-    sendEvent(res, 'error', {
-      message: err instanceof Error ? err.message : 'Cover letter generation failed',
     });
   } finally {
     res.end();

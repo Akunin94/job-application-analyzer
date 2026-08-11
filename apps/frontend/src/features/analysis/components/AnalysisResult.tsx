@@ -5,15 +5,10 @@ import { Badge } from '@/shared/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { AtsScoreCard } from './AtsScoreCard';
-import { CompanyResearchCard } from './CompanyResearchCard';
-import { InterviewPrepCard } from './InterviewPrepCard';
-import { ResumeSuggestionsCard } from './ResumeSuggestionsCard';
 import { MatchScoreCard } from './MatchScoreCard';
 import { RedFlagList } from './RedFlagList';
-import { SalaryEstimateCard } from './SalaryEstimateCard';
 import { SkillGapList } from './SkillGapList';
 import { SkillRadarChart } from './SkillRadarChart';
-import { SkillsRoadmapCard } from './SkillsRoadmapCard';
 
 interface AnalysisResultDashboardProps {
   result: AnalysisResultType;
@@ -32,11 +27,15 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
         <SkillRadarChart categoryScores={result.categoryScores} />
       </div>
 
-      {result.salaryEstimate && <SalaryEstimateCard estimate={result.salaryEstimate} />}
+      {result.summary && (
+        <Card>
+          <CardContent className="pt-5">
+            <p className="text-sm leading-relaxed text-muted-foreground">{result.summary}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {result.atsScore && <AtsScoreCard atsScore={result.atsScore} />}
-
-      {result.companyResearch && <CompanyResearchCard research={result.companyResearch} />}
 
       {result.strengths.length > 0 && (
         <Card>
@@ -71,10 +70,6 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
             <SkillGapList gaps={result.skillGaps} />
           </CardContent>
         </Card>
-      )}
-
-      {result.skillsRoadmap && result.skillsRoadmap.length > 0 && (
-        <SkillsRoadmapCard roadmap={result.skillsRoadmap} />
       )}
 
       {result.recommendations.length > 0 && (
@@ -144,14 +139,6 @@ export function AnalysisResultDashboard({ result }: AnalysisResultDashboardProps
             )}
           </CardContent>
         </Card>
-      )}
-
-      {result.resumeSuggestions && result.resumeSuggestions.length > 0 && (
-        <ResumeSuggestionsCard suggestions={result.resumeSuggestions} />
-      )}
-
-      {result.interviewPrep && result.interviewPrep.length > 0 && (
-        <InterviewPrepCard questions={result.interviewPrep} />
       )}
     </motion.div>
   );

@@ -112,6 +112,23 @@ describe('useSSE', () => {
     expect(result.current.status).toBe('error');
   });
 
+  it('reports an error when the stream ends without done or error', async () => {
+    // What a server crash mid-response looks like: some output, then silence.
+    global.fetch = mockFetchOk('event: section_start\ndata: {"target":"resume"}\n\n');
+    const onEvent = vi.fn();
+    const { result } = renderHook(() => useSSE(onEvent));
+
+    await act(async () => {
+      await result.current.connect('http://localhost:3001/api/analyze/generate', {});
+    });
+
+    expect(result.current.status).toBe('error');
+    expect(onEvent).toHaveBeenCalledWith({
+      type: 'error',
+      data: { message: 'The connection dropped before the response finished. Try again.' },
+    });
+  });
+
   it('abort() resets status to idle', async () => {
     // Set up a fetch that never resolves (simulates long stream)
     global.fetch = vi.fn().mockReturnValue(new Promise(() => {}));

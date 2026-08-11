@@ -50,18 +50,10 @@ describe('useStreamAnalysis', () => {
     expect(analysis?.confidence).toBe('high');
     expect(analysis?.categoryScores.technicalSkills).toBe(80);
     expect(analysis?.redFlags[0]).toMatchObject({ flag: 'US-only remote', severity: 'critical' });
-    expect(analysis?.salaryEstimate).toMatchObject({ min: 90000, max: 130000, currency: 'USD' });
     expect(analysis?.atsScore).toMatchObject({ score: 72, verdict: 'likely_pass' });
-    expect(analysis?.skillsRoadmap?.[0]).toMatchObject({
-      skill: 'Kubernetes',
-      priority: 'important',
-    });
-    expect(analysis?.interviewPrep?.[0]).toMatchObject({
-      category: 'technical',
-      difficulty: 'medium',
-    });
-    expect(analysis?.resumeSuggestions?.[0]).toMatchObject({ section: 'Summary', type: 'rewrite' });
-    expect(analysis?.companyResearch).toMatchObject({ name: 'Acme Corp', industry: 'Software' });
+    expect(analysis?.summary).toContain('Kubernetes');
+    expect(analysis?.skillGaps[0]).toMatchObject({ skill: 'Kubernetes', priority: 'important' });
+    expect(analysis?.keywords).toMatchObject({ matched: ['React', 'TypeScript'] });
   });
 
   it('adds entry to history on done', async () => {

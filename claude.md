@@ -65,11 +65,15 @@ ai-job-analyzer/
 │   │       │   ├── analysis/
 │   │       │   │   ├── components/   # AnalysisForm, AnalysisResult,
 │   │       │   │   │                 # MatchScoreCard, SkillRadarChart,
-│   │       │   │   │                 # SkillGapList, StreamingOutput,
-│   │       │   │   │                 # CoverLetterPanel
+│   │       │   │   │                 # SkillGapList, AtsScoreCard,
+│   │       │   │   │                 # RedFlagList, StreamingOutput
 │   │       │   │   ├── hooks/        # useStreamAnalysis, useAnalysisHistory
 │   │       │   │   ├── schemas/      # Zod schemas
 │   │       │   │   └── api/          # API call functions
+│   │       │   ├── generate/         # post-analysis artifacts
+│   │       │   │   ├── components/   # GeneratePanel, ResumePdf
+│   │       │   │   ├── hooks/        # useGenerate
+│   │       │   │   └── lib/          # docx.ts (resume + letter .docx builders)
 │   │       │   ├── resume/
 │   │       │   │   ├── components/   # ResumeUploader, ResumePreview
 │   │       │   │   └── hooks/        # useResumeStore (Zustand slice)
@@ -125,10 +129,10 @@ export interface AnalysisResult {
   };
   strengths: string[];
   skillGaps: SkillGap[];
-  redFlags: string[];
+  redFlags: RedFlag[];
   recommendations: string[];
   keywords: { matched: string[]; missing: string[] };
-  coverLetterOutline: string;
+  atsScore: AtsScore | null;
 }
 
 export interface SkillGap {
@@ -139,11 +143,14 @@ export interface SkillGap {
 
 export type SSEEvent =
   | { type: 'match_score'; data: { score: number; confidence: 'low' | 'medium' | 'high' } }
+  | { type: 'summary'; data: string }
   | { type: 'category_scores'; data: AnalysisResult['categoryScores'] }
   | { type: 'strengths'; data: string[] }
   | { type: 'gaps'; data: SkillGap[] }
   | { type: 'recommendations'; data: string[] }
-  | { type: 'cover_letter'; data: string }
+  | { type: 'keywords'; data: AnalysisResult['keywords'] }
+  | { type: 'red_flags'; data: RedFlag[] }
+  | { type: 'ats_score'; data: AtsScore | null }
   | { type: 'done'; data: null }
   | { type: 'error'; data: { message: string } };
 ```
@@ -189,12 +196,21 @@ Include `<resume>` and `<job_posting>` XML tags wrapping the inputs.
 Evaluate: technical skills match, experience level, culture fit signals, keyword overlap, seniority match, tools/stack alignment.
 Detect red flags: US-only remote, mobile dev required, specific language requirement, on-site, security clearance.
 
-### Cover Letter (`apps/backend/src/prompts/coverletter.prompt.ts`)
+Deliberately **out of scope** — do not add these back. They were removed to keep the
+analysis cheap and focused on "score + what's missing": company research, salary
+estimates, interview questions, skills roadmaps, ready-to-paste resume suggestions.
 
-3 paragraphs, ~250 words.
-Use matched keywords and top strengths from analysis.
-Specific hook about company mission in opening.
-No generic boilerplate. Return only the letter text.
+### Generation (`apps/backend/src/prompts/generate.prompt.ts`)
+
+One prompt produces every artifact the user ticked, in a single Claude call, separated by
+`<<<SECTION:*>>>` sentinel markers so the server can flush each one as it closes
+(`apps/backend/src/lib/section-stream.ts` does the splitting).
+
+- **Resume** — JSON. Mirrors the candidate's own section order and headings instead of a fixed
+  template; facts, dates and employers are immutable; only wording, ordering and emphasis change.
+  Anything the resume cannot honestly support is skipped and reported in `changeLog`.
+- **Cover letter / company email / recruiter DM** — plain text, ATS-friendly, built around the
+  matched keywords from the analysis. The email leads with a `Subject:` line.
 
 ---
 
@@ -245,10 +261,13 @@ Persist only `history` slice via `partialize`.
 ## API Endpoints
 
 ```
-POST   /api/upload/resume     # multipart/form-data, returns { text, fileName }
-POST   /api/analyze           # { resumeText, jobPosting } → SSE stream
-POST   /api/cover-letter      # { resumeText, jobPosting, analysis } → SSE stream
-GET    /api/health            # { status: 'ok' }
+POST   /api/upload/resume       # multipart/form-data, returns { text, fileName }
+POST   /api/analyze             # { resumeText, jobPosting } → SSE stream (score + gaps)
+POST   /api/analyze/generate    # { resumeText, jobPosting, analysis, targets[], instructions }
+                                #   → SSE stream, one section per requested target
+POST   /api/analyze/follow-up   # post-interview email → SSE stream
+POST   /api/parse-url           # LinkedIn job URL → { title, company, jobPosting }
+GET    /api/health              # { status: 'ok' }
 ```
 
 ---
@@ -303,6 +322,6 @@ VITE_API_URL=http://localhost:3001
 8. Frontend: ResumeUploader + JobPostingForm
 9. Frontend: StreamingOutput + AnalysisResult dashboard
 10. Frontend: Recharts RadarChart + MatchScoreCard
-11. Frontend: CoverLetterPanel
+11. Frontend: GeneratePanel (resume rewrite + letters)
 12. Frontend: History + CompareDrawer
 13. Tests + CI + Deploy

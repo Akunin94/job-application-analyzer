@@ -12,6 +12,18 @@ interface UseSSEReturn {
   abort: () => void;
 }
 
+/** Turns a failed response into something worth showing a user, not "Request failed: 429". */
+async function describeFailure(res: Response): Promise<string> {
+  if (res.status === 429) {
+    return 'Rate limit reached — the AI endpoints allow 10 requests per 15 minutes. Wait a moment and try again.';
+  }
+
+  const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
+  const detail = typeof body?.error === 'string' ? body.error : '';
+
+  return detail || `The server returned ${res.status}. Check that the backend is running.`;
+}
+
 export function useSSE(onEvent: (event: SSEEvent) => void): UseSSEReturn {
   const [status, setStatus] = useState<StreamingStatus>('idle');
   const abortRef = useRef<AbortController | null>(null);
@@ -38,7 +50,7 @@ export function useSSE(onEvent: (event: SSEEvent) => void): UseSSEReturn {
         });
 
         if (!res.ok || !res.body) {
-          throw new Error(`Request failed: ${res.status}`);
+          throw new Error(await describeFailure(res));
         }
 
         setStatus('streaming');
@@ -46,6 +58,7 @@ export function useSSE(onEvent: (event: SSEEvent) => void): UseSSEReturn {
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
+        let sawTerminalEvent = false;
 
         while (true) {
           const { done, value } = await reader.read();
@@ -65,11 +78,24 @@ export function useSSE(onEvent: (event: SSEEvent) => void): UseSSEReturn {
             const type = eventMatch?.[1] ?? 'message';
             try {
               const data = JSON.parse(dataMatch[1]) as unknown;
+              if (type === 'done' || type === 'error') sawTerminalEvent = true;
               onEvent({ type, data });
             } catch {
               // skip malformed event
             }
           }
+        }
+
+        // A stream that ends without `done` or `error` means the server went
+        // away mid-response (crash, restart, proxy timeout). Without this the
+        // UI just sits there showing nothing, as if the click never happened.
+        if (!sawTerminalEvent) {
+          setStatus('error');
+          onEvent({
+            type: 'error',
+            data: { message: 'The connection dropped before the response finished. Try again.' },
+          });
+          return;
         }
 
         setStatus('done');

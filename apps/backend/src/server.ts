@@ -11,6 +11,14 @@ app.listen(env.PORT, () => {
 
 if (env.TELEGRAM_BOT_TOKEN) {
   const bot = createBot();
-  void bot.start();
+
+  // bot.start() only settles when polling stops. Leaving it unhandled meant a
+  // polling failure — most often a 409 because another instance (a deploy, or a
+  // second `pnpm dev`) holds the same token — became an unhandled rejection and
+  // took the whole API process down with it, killing any in-flight SSE stream.
+  bot.start().catch((err: unknown) => {
+    console.error('[Bot] Telegram polling stopped; the API keeps running.', err);
+  });
+
   console.log('[Bot] Telegram bot started (long polling)');
 }

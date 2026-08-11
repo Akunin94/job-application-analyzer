@@ -279,23 +279,6 @@ export function AnalysisPdfDocument({ result, company }: Props) {
           </View>
         )}
 
-        {/* ── Salary ── */}
-        {result.salaryEstimate && (
-          <View style={s.section}>
-            <Text style={s.sectionTitle}>Salary Estimate</Text>
-            <Text style={s.paragraph}>
-              {result.salaryEstimate.currency} {result.salaryEstimate.min.toLocaleString()} –{' '}
-              {result.salaryEstimate.max.toLocaleString()} / {result.salaryEstimate.period} ·{' '}
-              {result.salaryEstimate.confidence} confidence
-            </Text>
-            {result.salaryEstimate.notes && (
-              <Text style={[s.paragraph, { color: COLORS.muted }]}>
-                {result.salaryEstimate.notes}
-              </Text>
-            )}
-          </View>
-        )}
-
         {/* ── ATS Score ── */}
         {result.atsScore && (
           <View style={s.section}>

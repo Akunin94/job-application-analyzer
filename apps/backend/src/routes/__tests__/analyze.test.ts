@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
 import { app } from '../../app.js';
+import type { AnalysisResult } from '../../schemas/analyze.schema.js';
 
 vi.mock('../../services/claude.service.js', () => ({
   streamAnalysis: vi.fn(async (_res: import('express').Response) => {
@@ -9,13 +10,42 @@ vi.mock('../../services/claude.service.js', () => ({
     _res.write('event: done\ndata: null\n\n');
     _res.end();
   }),
-  streamCoverLetter: vi.fn(async (_res: import('express').Response) => {
+  streamFollowUpEmail: vi.fn(async (_res: import('express').Response) => {
     _res.setHeader('Content-Type', 'text/event-stream');
-    _res.write('event: cover_letter\ndata: "Dear Hiring Manager"\n\n');
     _res.write('event: done\ndata: null\n\n');
     _res.end();
   }),
 }));
+
+vi.mock('../../services/generate.service.js', () => ({
+  streamGeneration: vi.fn(async (_res: import('express').Response) => {
+    _res.setHeader('Content-Type', 'text/event-stream');
+    _res.write('event: section_start\ndata: {"target":"coverLetter"}\n\n');
+    _res.write('event: section\ndata: {"target":"coverLetter","data":"Dear team"}\n\n');
+    _res.write('event: done\ndata: null\n\n');
+    _res.end();
+  }),
+}));
+
+const analysis: AnalysisResult = {
+  matchScore: 80,
+  confidence: 'high',
+  summary: 'Strong match.',
+  categoryScores: {
+    technicalSkills: 80,
+    experience: 70,
+    cultureFit: 90,
+    keywords: 85,
+    seniority: 75,
+    tools: 80,
+  },
+  strengths: ['React'],
+  skillGaps: [],
+  redFlags: [{ flag: 'US-only remote', quote: 'Must be in the US', severity: 'critical' }],
+  recommendations: [],
+  keywords: { matched: ['React'], missing: ['Kubernetes'] },
+  atsScore: null,
+};
 
 describe('POST /api/analyze', () => {
   it('returns 400 when resumeText is missing', async () => {
@@ -50,53 +80,37 @@ describe('POST /api/analyze', () => {
   });
 });
 
-describe('POST /api/analyze/cover-letter', () => {
+describe('POST /api/analyze/generate', () => {
   it('returns 400 when fields are missing', async () => {
-    const res = await request(app).post('/api/analyze/cover-letter').send({});
+    const res = await request(app).post('/api/analyze/generate').send({});
     expect(res.status).toBe(400);
   });
 
-  it('streams cover letter for valid request', async () => {
+  it('returns 400 when no targets are selected', async () => {
+    const res = await request(app).post('/api/analyze/generate').send({
+      resumeText: 'My resume',
+      jobPosting: 'Senior developer role',
+      analysis,
+      targets: [],
+    });
+
+    expect(res.status).toBe(400);
+  });
+
+  it('streams the requested artifacts for a valid request', async () => {
     const res = await request(app)
-      .post('/api/analyze/cover-letter')
+      .post('/api/analyze/generate')
       .send({
         resumeText: 'My resume',
         jobPosting: 'Senior developer role',
-        analysis: {
-          matchScore: 80,
-          confidence: 'high',
-          summary: '',
-          categoryScores: {
-            technicalSkills: 80,
-            experience: 70,
-            cultureFit: 90,
-            keywords: 85,
-            seniority: 75,
-            tools: 80,
-          },
-          strengths: ['React'],
-          skillGaps: [],
-          redFlags: [{ flag: 'US-only remote', quote: 'Must be in the US', severity: 'critical' }],
-          recommendations: [],
-          keywords: { matched: [], missing: [] },
-          coverLetterOutline: '',
-          salaryEstimate: {
-            min: 90000,
-            max: 130000,
-            currency: 'USD',
-            period: 'year',
-            confidence: 'medium',
-            notes: 'Market rate',
-          },
-          atsScore: null,
-          skillsRoadmap: null,
-          interviewPrep: null,
-          resumeSuggestions: null,
-          companyResearch: null,
-        },
+        analysis,
+        targets: ['coverLetter'],
+        instructions: 'Mention my Kubernetes homelab.',
       });
 
     expect(res.status).toBe(200);
-    expect(res.text).toContain('event: cover_letter');
+    expect(res.headers['content-type']).toContain('text/event-stream');
+    expect(res.text).toContain('event: section');
+    expect(res.text).toContain('event: done');
   });
 });

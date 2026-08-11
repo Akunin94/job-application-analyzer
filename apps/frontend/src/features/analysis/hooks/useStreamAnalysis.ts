@@ -10,6 +10,15 @@ type PartialAnalysis = Partial<
   >
 >;
 
+const EMPTY_CATEGORY_SCORES: AnalysisResult['categoryScores'] = {
+  technicalSkills: 0,
+  experience: 0,
+  cultureFit: 0,
+  keywords: 0,
+  seniority: 0,
+  tools: 0,
+};
+
 export function useStreamAnalysis() {
   const setAnalysis = useStore(s => s.setAnalysis);
   const setStreamingStatus = useStore(s => s.setStreamingStatus);
@@ -32,6 +41,10 @@ export function useStreamAnalysis() {
           setPartial(p => ({ ...p, matchScore: d.score, confidence: d.confidence }));
           break;
         }
+        case 'summary': {
+          acc.summary = event.data as string;
+          break;
+        }
         case 'category_scores': {
           acc.categoryScores = event.data as AnalysisResult['categoryScores'];
           setPartial(p => ({ ...p, categoryScores: acc.categoryScores }));
@@ -52,59 +65,30 @@ export function useStreamAnalysis() {
           setPartial(p => ({ ...p, recommendations: acc.recommendations }));
           break;
         }
-        case 'red_flags': {
-          acc.redFlags = event.data as AnalysisResult['redFlags'];
+        case 'keywords': {
+          acc.keywords = event.data as AnalysisResult['keywords'];
           break;
         }
-        case 'salary': {
-          acc.salaryEstimate = event.data as AnalysisResult['salaryEstimate'];
+        case 'red_flags': {
+          acc.redFlags = event.data as AnalysisResult['redFlags'];
           break;
         }
         case 'ats_score': {
           acc.atsScore = event.data as AnalysisResult['atsScore'];
           break;
         }
-        case 'skills_roadmap': {
-          acc.skillsRoadmap = event.data as AnalysisResult['skillsRoadmap'];
-          break;
-        }
-        case 'interview_prep': {
-          acc.interviewPrep = event.data as AnalysisResult['interviewPrep'];
-          break;
-        }
-        case 'resume_suggestions': {
-          acc.resumeSuggestions = event.data as AnalysisResult['resumeSuggestions'];
-          break;
-        }
-        case 'company_research': {
-          acc.companyResearch = event.data as AnalysisResult['companyResearch'];
-          break;
-        }
         case 'done': {
           const result: AnalysisResult = {
             matchScore: acc.matchScore ?? 0,
             confidence: acc.confidence ?? 'low',
-            summary: '',
-            categoryScores: acc.categoryScores ?? {
-              technicalSkills: 0,
-              experience: 0,
-              cultureFit: 0,
-              keywords: 0,
-              seniority: 0,
-              tools: 0,
-            },
+            summary: acc.summary ?? '',
+            categoryScores: acc.categoryScores ?? EMPTY_CATEGORY_SCORES,
             strengths: acc.strengths ?? [],
             skillGaps: acc.skillGaps ?? [],
             redFlags: acc.redFlags ?? [],
             recommendations: acc.recommendations ?? [],
-            keywords: { matched: [], missing: [] },
-            coverLetterOutline: '',
-            salaryEstimate: acc.salaryEstimate ?? null,
+            keywords: acc.keywords ?? { matched: [], missing: [] },
             atsScore: acc.atsScore ?? null,
-            skillsRoadmap: acc.skillsRoadmap ?? null,
-            interviewPrep: acc.interviewPrep ?? null,
-            resumeSuggestions: acc.resumeSuggestions ?? null,
-            companyResearch: acc.companyResearch ?? null,
           };
           setAnalysis(result);
           addToHistory({

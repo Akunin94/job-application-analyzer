@@ -12,60 +12,11 @@ const redFlagSchema = z.object({
   severity: z.enum(['warning', 'critical']),
 });
 
-const salaryEstimateSchema = z.object({
-  min: z.number().nonnegative(),
-  max: z.number().nonnegative(),
-  currency: z.string(),
-  period: z.enum(['year', 'month']),
-  confidence: z.enum(['low', 'medium', 'high']),
-  notes: z.string(),
-});
-
 const atsScoreSchema = z.object({
   score: z.number().min(0).max(100),
   verdict: z.enum(['likely_pass', 'borderline', 'likely_reject']),
   missingKeywords: z.array(z.string()),
   formattingTips: z.array(z.string()),
-});
-
-const resumeSuggestionSchema = z.object({
-  section: z.string(),
-  type: z.enum(['rewrite', 'add', 'remove', 'strengthen']),
-  current: z.string(),
-  suggestion: z.string(),
-  reason: z.string(),
-});
-
-const interviewQuestionSchema = z.object({
-  question: z.string(),
-  category: z.enum(['technical', 'behavioral', 'situational', 'culture-fit']),
-  difficulty: z.enum(['easy', 'medium', 'hard']),
-  tip: z.string(),
-});
-
-const roadmapResourceSchema = z.object({
-  title: z.string(),
-  type: z.enum(['course', 'docs', 'book', 'tutorial', 'practice']),
-});
-
-const companyResearchSchema = z.object({
-  name: z.string(),
-  overview: z.string(),
-  industry: z.string(),
-  size: z.string(),
-  funding: z.string(),
-  techStack: z.array(z.string()),
-  culture: z.array(z.string()),
-  interviewProcess: z.string(),
-  confidence: z.enum(['low', 'medium', 'high']),
-  disclaimer: z.string(),
-});
-
-const skillsRoadmapItemSchema = z.object({
-  skill: z.string(),
-  priority: z.enum(['critical', 'important', 'nice-to-have']),
-  timeEstimate: z.string(),
-  resources: z.array(roadmapResourceSchema),
 });
 
 export const analysisResultSchema = z.object({
@@ -88,14 +39,42 @@ export const analysisResultSchema = z.object({
     matched: z.array(z.string()),
     missing: z.array(z.string()),
   }),
-  coverLetterOutline: z.string(),
-  salaryEstimate: salaryEstimateSchema.nullable(),
   atsScore: atsScoreSchema.nullable(),
-  skillsRoadmap: z.array(skillsRoadmapItemSchema).nullable(),
-  interviewPrep: z.array(interviewQuestionSchema).nullable(),
-  resumeSuggestions: z.array(resumeSuggestionSchema).nullable(),
-  companyResearch: companyResearchSchema.nullable(),
 });
+
+/**
+ * The rewritten resume keeps the original document's own section order and
+ * headings — the shape is deliberately loose so Claude can mirror whatever the
+ * candidate already had instead of being forced into a fixed template.
+ */
+const resumeSectionSchema = z.discriminatedUnion('kind', [
+  z.object({ heading: z.string(), kind: z.literal('text'), text: z.string() }),
+  z.object({ heading: z.string(), kind: z.literal('bullets'), bullets: z.array(z.string()) }),
+  z.object({
+    heading: z.string(),
+    kind: z.literal('entries'),
+    entries: z.array(
+      z.object({
+        title: z.string(),
+        subtitle: z.string().default(''),
+        meta: z.string().default(''),
+        bullets: z.array(z.string()).default([]),
+      }),
+    ),
+  }),
+]);
+
+export const generatedResumeSchema = z.object({
+  header: z.object({
+    name: z.string(),
+    title: z.string().default(''),
+    contact: z.string().default(''),
+  }),
+  sections: z.array(resumeSectionSchema),
+  changeLog: z.array(z.string()).default([]),
+});
+
+export const GENERATE_TARGETS = ['resume', 'coverLetter', 'companyEmail', 'hrMessage'] as const;
 
 export const analyzeRequestSchema = z.object({
   resumeText: z.string().min(1, 'Resume text is required'),
@@ -103,10 +82,14 @@ export const analyzeRequestSchema = z.object({
   language: z.string().default('auto'),
 });
 
-export const coverLetterRequestSchema = z.object({
+export const generateRequestSchema = z.object({
   resumeText: z.string().min(1, 'Resume text is required'),
   jobPosting: z.string().min(1, 'Job posting is required'),
   analysis: analysisResultSchema,
+  targets: z.array(z.enum(GENERATE_TARGETS)).min(1, 'Select at least one item to generate'),
+  instructions: z.string().default(''),
+  company: z.string().default(''),
+  hrName: z.string().default(''),
   language: z.string().default('auto'),
 });
 
@@ -120,14 +103,9 @@ export const followUpRequestSchema = z.object({
   language: z.string().default('auto'),
 });
 
-export const enhanceResumeRequestSchema = z.object({
-  resumeText: z.string().min(1, 'Resume text is required'),
-  jobPosting: z.string().min(1, 'Job posting is required'),
-  improvements: z.array(z.string().min(1)).min(1, 'Select at least one improvement'),
-});
-
-export type EnhanceResumeRequest = z.infer<typeof enhanceResumeRequestSchema>;
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
-export type CoverLetterRequest = z.infer<typeof coverLetterRequestSchema>;
+export type GenerateRequest = z.infer<typeof generateRequestSchema>;
+export type GenerateTarget = (typeof GENERATE_TARGETS)[number];
 export type FollowUpRequest = z.infer<typeof followUpRequestSchema>;
 export type AnalysisResult = z.infer<typeof analysisResultSchema>;
+export type GeneratedResume = z.infer<typeof generatedResumeSchema>;
