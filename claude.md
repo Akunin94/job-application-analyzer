@@ -79,7 +79,8 @@ ai-job-analyzer/
 │   │       │   │   ├── hooks/        # useGenerate
 │   │       │   │   └── lib/          # docx.ts (resume + letter .docx builders)
 │   │       │   ├── resume/
-│   │       │   │   ├── components/   # ResumeUploader, ResumePreview
+│   │       │   │   ├── components/   # ResumePicker, ResumeVersionList,
+│   │       │   │   │                 # ResumeUploader, ResumePreview
 │   │       │   │   └── hooks/        # useResumeStore (Zustand slice)
 │   │       │   └── history/
 │   │       │       ├── components/   # HistoryList, HistoryItem, CompareDrawer
@@ -223,11 +224,14 @@ One prompt produces every artifact the user ticked, in a single Claude call, sep
 ```typescript
 // One store, feature slices via immer + devtools + persist
 interface AppStore {
-  // resume slice
-  resumeText: string;
-  resumeFileName: string;
-  setResume: (text: string, fileName: string) => void;
-  clearResume: () => void;
+  // resume slice (persisted) — several stored resumes, one active
+  resumes: ResumeVersion[];
+  activeResumeId: string | null;
+  addResume: (text: string, fileName: string) => void;
+  selectResume: (id: string) => void;
+  renameResume: (id: string, name: string) => void;
+  removeResume: (id: string) => void;
+  clearResumes: () => void;
 
   // analysis slice
   currentAnalysis: AnalysisResult | null;
@@ -243,7 +247,11 @@ interface AppStore {
 }
 ```
 
-Persist only `history` slice via `partialize`.
+Persist `history`, `webhookConfig` and the resume slice via `partialize`.
+
+Components read the resume through `useResumeStore()`, which exposes the active
+version as plain `resumeText` / `resumeFileName` — pages that just want "the
+resume" never touch the version list.
 
 ---
 

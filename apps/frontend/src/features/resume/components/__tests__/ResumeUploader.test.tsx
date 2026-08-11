@@ -12,8 +12,14 @@ vi.mock('@/features/resume/components/ResumePreview', () => ({
 }));
 
 function resetStore() {
-  useStore.setState({ resumeText: '', resumeFileName: '' });
+  useStore.setState({ resumes: [], activeResumeId: null });
   localStorage.clear();
+}
+
+async function uploadPdf(name = 'my-resume.pdf') {
+  const file = new File(['%PDF-1.4 content'], name, { type: 'application/pdf' });
+  const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+  await userEvent.upload(input, file);
 }
 
 describe('ResumeUploader', () => {
@@ -24,16 +30,39 @@ describe('ResumeUploader', () => {
     expect(screen.getByText(/Drop PDF or click to upload/i)).toBeInTheDocument();
   });
 
-  it('shows filename after successful upload', async () => {
-    render(<ResumeUploader />);
-    const file = new File(['%PDF-1.4 content'], 'my-resume.pdf', { type: 'application/pdf' });
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+  it('offers to add another version in compact mode', () => {
+    render(<ResumeUploader compact />);
+    expect(screen.getByText(/Add another version/i)).toBeInTheDocument();
+  });
 
-    await userEvent.upload(input, file);
+  it('stores a new version on successful upload and makes it active', async () => {
+    render(<ResumeUploader />);
+    await uploadPdf();
 
     await waitFor(() => {
-      expect(screen.getByText('resume.pdf')).toBeInTheDocument();
+      expect(useStore.getState().resumes).toHaveLength(1);
     });
+
+    const [version] = useStore.getState().resumes;
+    expect(version.fileName).toBe('resume.pdf');
+    expect(version.name).toBe('resume.pdf');
+    expect(version.text).toBe('Sample resume text content');
+    expect(useStore.getState().activeResumeId).toBe(version.id);
+  });
+
+  it('re-selects the matching version instead of storing a duplicate', async () => {
+    const { unmount } = render(<ResumeUploader />);
+    await uploadPdf();
+    await waitFor(() => expect(useStore.getState().resumes).toHaveLength(1));
+    const firstId = useStore.getState().resumes[0].id;
+    unmount();
+
+    // The handler always returns the same text, so this is the same resume.
+    render(<ResumeUploader />);
+    await uploadPdf('same-resume-again.pdf');
+
+    await waitFor(() => expect(useStore.getState().activeResumeId).toBe(firstId));
+    expect(useStore.getState().resumes).toHaveLength(1);
   });
 
   it('shows error message on upload failure', async () => {
@@ -44,27 +73,11 @@ describe('ResumeUploader', () => {
     );
 
     render(<ResumeUploader />);
-    const file = new File(['%PDF-1.4 content'], 'bad.pdf', { type: 'application/pdf' });
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-
-    await userEvent.upload(input, file);
+    await uploadPdf('bad.pdf');
 
     await waitFor(() => {
       expect(screen.getByText(/Upload failed/i)).toBeInTheDocument();
     });
-  });
-
-  it('clears resume when X button is clicked', async () => {
-    // Pre-load store with a resume
-    useStore.setState({ resumeText: 'some text', resumeFileName: 'old.pdf' });
-
-    render(<ResumeUploader />);
-    expect(screen.getByText('old.pdf')).toBeInTheDocument();
-
-    const clearBtn = screen.getByRole('button');
-    await userEvent.click(clearBtn);
-
-    expect(useStore.getState().resumeText).toBe('');
-    expect(useStore.getState().resumeFileName).toBe('');
+    expect(useStore.getState().resumes).toHaveLength(0);
   });
 });

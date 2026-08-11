@@ -7,8 +7,8 @@ import { useStreamAnalysis } from '../useStreamAnalysis';
 
 function resetStore() {
   useStore.setState({
-    resumeText: '',
-    resumeFileName: '',
+    resumes: [],
+    activeResumeId: null,
     currentAnalysis: null,
     streamingStatus: 'idle',
     history: [],

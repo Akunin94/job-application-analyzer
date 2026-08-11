@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
-import { ResumeUploader } from '../../resume/components/ResumeUploader';
+import { ResumePicker } from '../../resume/components/ResumePicker';
 import { useResumeStore } from '../../resume/hooks/useResumeStore';
 import { fetchJobFromUrl } from '../api/analyze';
 import { AnalysisFormValues, analysisFormSchema } from '../schemas/analysis.schema';
@@ -97,7 +97,7 @@ export function AnalysisForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label>Resume</Label>
-        <ResumeUploader />
+        <ResumePicker />
       </div>
 
       {/* LinkedIn URL auto-fill */}

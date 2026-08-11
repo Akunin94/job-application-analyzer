@@ -100,7 +100,7 @@
 - [x] **Red flags drill-down** — explain each red flag with source quote from job posting
 - [ ] **Auth (Clerk/Auth.js)** — persist history in DB instead of localStorage
 - [x] **PDF export** — download full analysis report as PDF
-- [ ] **Resume versioning** — store multiple resume versions, pick one per analysis
+- [x] **Resume versioning** — up to 10 named resume versions persisted in the store, picked per analysis via `ResumePicker`; `useResumeStore()` still exposes the active one as plain `resumeText`
 
 ### Medium Priority
 

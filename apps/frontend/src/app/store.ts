@@ -44,17 +44,36 @@ export interface HistoryEntry {
   result: AnalysisResult;
 }
 
+export interface ResumeVersion {
+  id: string;
+  /** Defaults to the file name; the user can rename it to something meaningful. */
+  name: string;
+  fileName: string;
+  text: string;
+  addedAt: string;
+}
+
+/**
+ * Versions are persisted, and a resume is tens of kilobytes of text — an
+ * unbounded list would eventually blow the localStorage quota and take the
+ * history slice down with it. The oldest inactive version is evicted instead.
+ */
+export const MAX_RESUME_VERSIONS = 10;
+
 export interface WebhookConfig {
   notion: { integrationToken: string; databaseId: string };
   airtable: { apiKey: string; baseId: string; tableName: string };
 }
 
 interface AppStore {
-  // resume slice
-  resumeText: string;
-  resumeFileName: string;
-  setResume: (text: string, fileName: string) => void;
-  clearResume: () => void;
+  // resume slice (persisted)
+  resumes: ResumeVersion[];
+  activeResumeId: string | null;
+  addResume: (text: string, fileName: string) => void;
+  selectResume: (id: string) => void;
+  renameResume: (id: string, name: string) => void;
+  removeResume: (id: string) => void;
+  clearResumes: () => void;
 
   // analysis slice
   currentAnalysis: AnalysisResult | null;
@@ -78,25 +97,74 @@ export const useStore = create<AppStore>()(
     persist(
       set => ({
         // resume slice
-        resumeText: '',
-        resumeFileName: '',
-        setResume: (text, fileName) =>
+        resumes: [],
+        activeResumeId: null,
+        addResume: (text, fileName) =>
           set(
             produce((s: AppStore) => {
-              s.resumeText = text;
-              s.resumeFileName = fileName;
+              // Re-uploading a file whose text is already stored selects that
+              // version instead of stacking an identical copy next to it.
+              const existing = s.resumes.find(r => r.text === text);
+              if (existing) {
+                s.activeResumeId = existing.id;
+                return;
+              }
+
+              const version: ResumeVersion = {
+                id: crypto.randomUUID(),
+                name: fileName,
+                fileName,
+                text,
+                addedAt: new Date().toISOString(),
+              };
+              s.resumes.unshift(version);
+              s.activeResumeId = version.id;
+
+              // The new version sits at index 0 and is the active one, so the
+              // overflow is always the oldest and never the one in use.
+              s.resumes = s.resumes.slice(0, MAX_RESUME_VERSIONS);
             }),
             false,
-            'setResume',
+            'addResume',
           ),
-        clearResume: () =>
+        selectResume: id =>
           set(
             produce((s: AppStore) => {
-              s.resumeText = '';
-              s.resumeFileName = '';
+              if (s.resumes.some(r => r.id === id)) s.activeResumeId = id;
             }),
             false,
-            'clearResume',
+            'selectResume',
+          ),
+        renameResume: (id, name) =>
+          set(
+            produce((s: AppStore) => {
+              const version = s.resumes.find(r => r.id === id);
+              // An all-whitespace label would render as a blank row with no way
+              // to tell the versions apart, so it falls back to the file name.
+              if (version) version.name = name.trim() || version.fileName;
+            }),
+            false,
+            'renameResume',
+          ),
+        removeResume: id =>
+          set(
+            produce((s: AppStore) => {
+              s.resumes = s.resumes.filter(r => r.id !== id);
+              if (s.activeResumeId === id) {
+                s.activeResumeId = s.resumes[0]?.id ?? null;
+              }
+            }),
+            false,
+            'removeResume',
+          ),
+        clearResumes: () =>
+          set(
+            produce((s: AppStore) => {
+              s.resumes = [];
+              s.activeResumeId = null;
+            }),
+            false,
+            'clearResumes',
           ),
 
         // analysis slice
@@ -162,7 +230,12 @@ export const useStore = create<AppStore>()(
       }),
       {
         name: 'ai-job-analyzer',
-        partialize: state => ({ history: state.history, webhookConfig: state.webhookConfig }),
+        partialize: state => ({
+          history: state.history,
+          webhookConfig: state.webhookConfig,
+          resumes: state.resumes,
+          activeResumeId: state.activeResumeId,
+        }),
       },
     ),
     { name: 'AppStore' },

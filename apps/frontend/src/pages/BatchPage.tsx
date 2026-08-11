@@ -4,7 +4,7 @@ import { BatchJobEditor } from '@/features/batch/components/BatchJobEditor';
 import { BatchResultTable } from '@/features/batch/components/BatchResultTable';
 import { useBatchAnalysis } from '@/features/batch/hooks/useBatchAnalysis';
 import { BatchJobInput, emptyJob } from '@/features/batch/types';
-import { ResumeUploader } from '@/features/resume/components/ResumeUploader';
+import { ResumePicker } from '@/features/resume/components/ResumePicker';
 import { useResumeStore } from '@/features/resume/hooks/useResumeStore';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
@@ -50,7 +50,7 @@ export default function BatchPage() {
       <Card className="space-y-6 p-6">
         <div className="space-y-2">
           <Label>Resume</Label>
-          <ResumeUploader />
+          <ResumePicker />
         </div>
 
         <div className="space-y-2">

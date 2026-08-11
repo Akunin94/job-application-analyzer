@@ -1,15 +1,19 @@
-import { FileText, Upload, X } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button } from '@/shared/components/ui/button';
 import { cn } from '@/shared/lib/cn';
 import { useResumeStore } from '../hooks/useResumeStore';
 import { ResumePreview } from './ResumePreview';
 
 const API_URL = import.meta.env.VITE_API_URL as string;
 
-export function ResumeUploader() {
-  const { resumeFileName, setResume, clearResume, hasResume } = useResumeStore();
+interface Props {
+  /** Slimmer dropzone for when the version list above already carries the weight. */
+  compact?: boolean;
+}
+
+export function ResumeUploader({ compact = false }: Props) {
+  const { addResume } = useResumeStore();
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +39,7 @@ export function ResumeUploader() {
         if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
 
         const body = (await res.json()) as { text: string; fileName: string };
-        setResume(body.text, body.fileName);
+        addResume(body.text, body.fileName);
         setPendingFile(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Upload failed');
@@ -44,7 +48,7 @@ export function ResumeUploader() {
         setUploading(false);
       }
     },
-    [setResume],
+    [addResume],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -54,45 +58,30 @@ export function ResumeUploader() {
     disabled: uploading,
   });
 
-  const handleClear = () => {
-    setPendingFile(null);
-    setError(null);
-    clearResume();
-  };
-
-  if (hasResume && !uploading) {
-    return (
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-3">
-        <FileText size={16} className="shrink-0 text-muted-foreground" />
-        <span className="flex-1 truncate text-sm text-foreground">{resumeFileName}</span>
-        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={handleClear}>
-          <X size={14} />
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
       <div
         {...getRootProps()}
         className={cn(
-          'flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-8 text-center transition-colors',
+          'flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed text-center transition-colors',
+          compact ? 'p-4' : 'p-8',
           isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50',
           uploading && 'pointer-events-none opacity-50',
         )}
       >
         <input {...getInputProps()} />
-        <Upload size={24} className="text-muted-foreground" />
+        {!compact && <Upload size={24} className="text-muted-foreground" />}
         <div>
-          <p className="text-sm font-medium text-foreground">
+          <p className={cn('font-medium text-foreground', compact ? 'text-xs' : 'text-sm')}>
             {uploading
               ? 'Uploading…'
               : isDragActive
                 ? 'Drop your PDF here'
-                : 'Drop PDF or click to upload'}
+                : compact
+                  ? 'Add another version'
+                  : 'Drop PDF or click to upload'}
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">PDF only · max 10 MB</p>
+          {!compact && <p className="mt-0.5 text-xs text-muted-foreground">PDF only · max 10 MB</p>}
         </div>
       </div>
 
