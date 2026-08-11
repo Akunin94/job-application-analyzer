@@ -201,6 +201,7 @@ export function AnalysisForm({
           id="jobPosting"
           placeholder="Paste the full job description here…"
           rows={12}
+          required
           className="resize-none font-mono text-xs"
           disabled={isLoading}
           {...register('jobPosting')}

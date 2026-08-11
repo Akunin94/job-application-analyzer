@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import Anthropic from '@anthropic-ai/sdk';
 import { env } from '../config/env.js';
+import { extractJson } from '../lib/extract-json.js';
+import { AppError } from '../middleware/error.middleware.js';
 import { buildEnhanceResumePrompt, type EnhancedResume } from '../prompts/enhance-resume.prompt.js';
 import { type EnhanceResumeRequest } from '../schemas/analyze.schema.js';
 
@@ -15,8 +17,10 @@ export async function enhanceResume(
     const { resumeText, jobPosting, improvements } = req.body;
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4096,
+      model: 'claude-sonnet-5',
+      // A rewritten resume plus its change log easily exceeds 4096 tokens.
+      max_tokens: 16000,
+      thinking: { type: 'disabled' },
       messages: [
         {
           role: 'user',
@@ -25,10 +29,14 @@ export async function enhanceResume(
       ],
     });
 
+    if (message.stop_reason === 'max_tokens') {
+      throw new AppError(502, 'The rewritten resume was cut off before it finished.');
+    }
+
     const block = message.content[0];
     if (block.type !== 'text') throw new Error('Unexpected response type');
 
-    const result: EnhancedResume = JSON.parse(block.text);
+    const result = extractJson(block.text) as EnhancedResume;
     res.json(result);
   } catch (err) {
     next(err);

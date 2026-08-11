@@ -16,6 +16,7 @@ export function useStreamAnalysis() {
   const addToHistory = useStore(s => s.addToHistory);
 
   const [partial, setPartial] = useState<PartialAnalysis>({});
+  const [error, setError] = useState<string | null>(null);
   const accRef = useRef<Partial<AnalysisResult>>({});
   const companyRef = useRef('Unknown Company');
 
@@ -116,6 +117,8 @@ export function useStreamAnalysis() {
           break;
         }
         case 'error': {
+          const d = event.data as { message?: string } | null;
+          setError(d?.message ?? 'Analysis failed. Please try again.');
           setStreamingStatus('error');
           break;
         }
@@ -136,11 +139,12 @@ export function useStreamAnalysis() {
       accRef.current = {};
       companyRef.current = company;
       setPartial({});
+      setError(null);
       setStreamingStatus('connecting');
       await connect(ANALYZE_URL, { resumeText, jobPosting, language });
     },
     [connect, setStreamingStatus],
   );
 
-  return { status, partial, start, abort };
+  return { status, partial, error, start, abort };
 }

@@ -28,7 +28,7 @@ const PDFDownloadLink = lazy(() =>
 export default function AnalyzePage() {
   const { resumeText } = useResumeStore();
   const currentAnalysis = useStore(s => s.currentAnalysis);
-  const { status, start } = useStreamAnalysis();
+  const { status, error, start } = useStreamAnalysis();
   const [showForm, setShowForm] = useState(!currentAnalysis);
   const [searchParams] = useSearchParams();
 
@@ -81,7 +81,9 @@ export default function AnalyzePage() {
     );
   }
 
-  if (!showForm && currentAnalysis) {
+  // On error fall through to the form so the banner is visible, even when a
+  // previous analysis is still in the store.
+  if (!showForm && currentAnalysis && !error) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-8">
         <div className="mb-6 flex items-center justify-between">
@@ -163,6 +165,16 @@ export default function AnalyzePage() {
           Upload your resume and paste a job posting to get an AI-powered match analysis.
         </p>
       </div>
+      {error && (
+        <div
+          role="alert"
+          className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
+          <p className="font-medium">Analysis failed</p>
+          <p className="mt-0.5 text-destructive/90">{error}</p>
+        </div>
+      )}
+
       <Card className="p-6">
         <AnalysisForm
           onSubmit={handleSubmit}

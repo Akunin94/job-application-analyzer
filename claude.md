@@ -27,7 +27,7 @@ All AI responses stream in real-time via SSE (Server-Sent Events).
 ### Backend (`apps/backend`)
 
 - Node.js 20 (ESM) + Express 5 + TypeScript
-- Anthropic SDK — model: `claude-sonnet-4-20250514`, streaming enabled
+- Anthropic SDK — model: `claude-sonnet-5`, streaming enabled
 - pdf-parse — extract text from uploaded PDFs
 - multer — file upload handling
 - Zod — request validation middleware

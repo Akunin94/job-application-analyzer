@@ -17,6 +17,10 @@ export function errorMiddleware(err: Error, _req: Request, res: Response, _next:
     return res.status(err.statusCode).json({ error: err.message });
   }
 
+  if ((err as { type?: string }).type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Request body too large.' });
+  }
+
   Sentry.captureException(err);
   console.error(err);
   return res.status(500).json({ error: 'Internal server error' });

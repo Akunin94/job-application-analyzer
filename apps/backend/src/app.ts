@@ -17,7 +17,7 @@ export const app: Express = express();
 app.use(helmet());
 app.use(cors({ origin: env.FRONTEND_URL }));
 app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
 
 app.use('/api', apiLimiter);
 app.use('/api/analyze', aiLimiter);

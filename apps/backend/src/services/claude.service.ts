@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Response } from 'express';
 
 import { env } from '../config/env.js';
+import { extractJson } from '../lib/extract-json.js';
 import { buildAnalyzePrompt } from '../prompts/analyze.prompt.js';
 import { buildCoverLetterPrompt } from '../prompts/coverletter.prompt.js';
 import { buildFollowUpPrompt } from '../prompts/followup.prompt.js';
@@ -10,7 +11,12 @@ import { cacheKey, getCachedAnalysis, setCachedAnalysis } from './cache.service.
 
 const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
 
-const MODEL = 'claude-sonnet-4-20250514';
+const MODEL = 'claude-sonnet-5';
+
+// The analysis prompt asks for one large JSON object (interview prep, resume
+// suggestions, company research…) — measured at ~5.2k output tokens for a
+// typical posting. 4096 truncated it mid-string and JSON.parse blew up.
+const ANALYSIS_MAX_TOKENS = 16000;
 
 function setSSEHeaders(res: Response): void {
   res.setHeader('Content-Type', 'text/event-stream');
@@ -60,7 +66,8 @@ export async function streamAnalysis(
 
     const stream = anthropic.messages.stream({
       model: MODEL,
-      max_tokens: 4096,
+      max_tokens: ANALYSIS_MAX_TOKENS,
+      thinking: { type: 'disabled' },
       messages: [{ role: 'user', content: buildAnalyzePrompt(resumeText, jobPosting, language) }],
     });
 
@@ -70,7 +77,14 @@ export async function streamAnalysis(
       }
     }
 
-    const parsed = analysisResultSchema.parse(JSON.parse(accumulated));
+    const final = await stream.finalMessage();
+    if (final.stop_reason === 'max_tokens') {
+      throw new Error(
+        'The analysis was cut off before it finished. Try a shorter job posting or resume.',
+      );
+    }
+
+    const parsed = analysisResultSchema.parse(extractJson(accumulated));
     void setCachedAnalysis(key, parsed);
     flushResult(res, parsed);
   } catch (err) {
@@ -95,6 +109,7 @@ export async function streamCoverLetter(
     const stream = anthropic.messages.stream({
       model: MODEL,
       max_tokens: 1024,
+      thinking: { type: 'disabled' },
       messages: [
         {
           role: 'user',
@@ -139,6 +154,7 @@ export async function streamFollowUpEmail(
     const stream = anthropic.messages.stream({
       model: MODEL,
       max_tokens: 1024,
+      thinking: { type: 'disabled' },
       messages: [
         {
           role: 'user',
