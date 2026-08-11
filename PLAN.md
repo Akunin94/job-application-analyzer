@@ -106,7 +106,7 @@
 
 - [x] **Redis cache** — cache analysis results by `sha256(resume+job)` for 24h; `ioredis`, no-op when `REDIS_URL` absent; `X-Cache: HIT` header on cache hits; Redis service added to `docker-compose.yml`
 - [x] **Sentry error tracking** — `@sentry/node` (backend) + `@sentry/react` (frontend, ErrorBoundary); activated via `SENTRY_DSN` / `VITE_SENTRY_DSN` env vars
-- [ ] **OpenAPI / Swagger** — auto-generated API docs
+- [x] **OpenAPI / Swagger** — `GET /api/docs` (UI) + `/api/docs.json`; request bodies generated from the Zod schemas via `zod-to-json-schema`, so a renamed field is renamed in the docs. A test asserts every documented path is actually mounted
 - [x] **Salary estimation** — AI estimates salary range from job posting + market data
 - [x] **Skills roadmap** — learning plan for closing skill gaps with resources/links
 - [x] **ATS score** — estimate whether resume passes automated keyword filters

@@ -97,7 +97,8 @@ ai-job-analyzer/
 │   │
 │   └── backend/
 │       └── src/
-│           ├── routes/         # analyze.route.ts, upload.route.ts
+│           ├── docs/           # openapi.ts (spec built from the Zod schemas)
+│           ├── routes/         # analyze.route.ts, upload.route.ts, docs.route.ts
 │           ├── controllers/    # analyze.controller.ts, upload.controller.ts
 │           ├── services/       # claude.service.ts, pdf.service.ts
 │           ├── middleware/     # validate, error, upload
@@ -282,6 +283,9 @@ POST   /api/analyze/generate    # { resumeText, jobPosting, analysis, targets[],
 POST   /api/analyze/follow-up   # post-interview email → SSE stream
 POST   /api/parse-url           # LinkedIn job URL → { title, company, jobPosting }
 GET    /api/health              # { status: 'ok' }
+GET    /api/docs                # Swagger UI
+GET    /api/docs.json           # OpenAPI 3.0 spec, request bodies generated
+                                #   from the Zod schemas in src/schemas/
 ```
 
 ---
